@@ -14,11 +14,25 @@
     <SolidColorBrush x:Key="Dim" Color="#8C8C8C"/>
     <SolidColorBrush x:Key="Faint" Color="#4A4A4A"/>
     <SolidColorBrush x:Key="Track" Color="#2A2A2A"/>
+    <!-- цветовые кисти; при запуске NoirTheme.Init заменяет их изменяемыми и красит по выбранному режиму -->
+    <SolidColorBrush x:Key="Accent" Color="#F2F2F2"/>
+    <SolidColorBrush x:Key="OnAccent" Color="#0A0A0A"/>
+    <SolidColorBrush x:Key="AccentSoft" Color="#40F2F2F2"/>
+    <SolidColorBrush x:Key="SideGlass" Color="#B80A0A0A"/>
+    <SolidColorBrush x:Key="BarGlass" Color="#E00A0A0A"/>
+    <SolidColorBrush x:Key="PanelBg" Color="#F50E0E0E"/>
+    <SolidColorBrush x:Key="MenuBg" Color="#181818"/>
+    <SolidColorBrush x:Key="Tile" Color="#141414"/>
+    <LinearGradientBrush x:Key="Shade" StartPoint="0,0" EndPoint="0,1">
+      <GradientStop Color="#B80A0A0A" Offset="0"/>
+      <GradientStop Color="#DA0A0A0A" Offset="0.55"/>
+      <GradientStop Color="#F80A0A0A" Offset="1"/>
+    </LinearGradientBrush>
     <FontFamily x:Key="Icons">Segoe Fluent Icons, Segoe MDL2 Assets</FontFamily>
 
     <!-- кнопка-иконка -->
     <Style x:Key="IconBtn" TargetType="Button">
-      <Setter Property="Foreground" Value="{StaticResource Dim}"/>
+      <Setter Property="Foreground" Value="{DynamicResource Dim}"/>
       <Setter Property="FontFamily" Value="{StaticResource Icons}"/>
       <Setter Property="FontSize" Value="16"/>
       <Setter Property="Width" Value="36"/>
@@ -33,7 +47,7 @@
             </Border>
             <ControlTemplate.Triggers>
               <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="Foreground" Value="{StaticResource Fg}"/>
+                <Setter Property="Foreground" Value="{DynamicResource Fg}"/>
                 <Setter TargetName="B" Property="Background" Value="#1AFFFFFF"/>
               </Trigger>
               <Trigger Property="IsPressed" Value="True">
@@ -47,7 +61,7 @@
 
     <!-- большая белая круглая кнопка Play -->
     <Style x:Key="PlayBtn" TargetType="Button">
-      <Setter Property="Foreground" Value="#0A0A0A"/>
+      <Setter Property="Foreground" Value="{DynamicResource OnAccent}"/>
       <Setter Property="FontFamily" Value="{StaticResource Icons}"/>
       <Setter Property="FontSize" Value="16"/>
       <Setter Property="Width" Value="40"/>
@@ -61,12 +75,12 @@
       <Setter Property="Template">
         <Setter.Value>
           <ControlTemplate TargetType="Button">
-            <Border x:Name="B" Background="{StaticResource Fg}" CornerRadius="100">
+            <Border x:Name="B" Background="{DynamicResource Accent}" CornerRadius="100">
               <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
             </Border>
             <ControlTemplate.Triggers>
               <Trigger Property="IsMouseOver" Value="True">
-                <Setter TargetName="B" Property="Background" Value="#FFFFFF"/>
+                <Setter TargetName="B" Property="Opacity" Value="0.9"/>
                 <Setter Property="RenderTransform"><Setter.Value><ScaleTransform ScaleX="1.05" ScaleY="1.05"/></Setter.Value></Setter>
               </Trigger>
               <Trigger Property="IsPressed" Value="True">
@@ -80,7 +94,7 @@
 
     <!-- кнопка-«пилюля» (Слушать, Перемешать, фильтры волны) -->
     <Style x:Key="Pill" TargetType="Button">
-      <Setter Property="Foreground" Value="{StaticResource Fg}"/>
+      <Setter Property="Foreground" Value="{DynamicResource Fg}"/>
       <!-- полупрозрачные: видны и на тёмном, и на светлом размытом фоне обложки -->
       <Setter Property="Background" Value="#14FFFFFF"/>
       <Setter Property="BorderBrush" Value="#2EFFFFFF"/>
@@ -105,14 +119,14 @@
       </Setter>
     </Style>
     <Style x:Key="PillOn" TargetType="Button" BasedOn="{StaticResource Pill}">
-      <Setter Property="Foreground" Value="#0A0A0A"/>
-      <Setter Property="Background" Value="{StaticResource Fg}"/>
-      <Setter Property="BorderBrush" Value="{StaticResource Fg}"/>
+      <Setter Property="Foreground" Value="{DynamicResource OnAccent}"/>
+      <Setter Property="Background" Value="{DynamicResource Accent}"/>
+      <Setter Property="BorderBrush" Value="{DynamicResource Accent}"/>
     </Style>
 
     <!-- пункт бокового меню -->
     <Style x:Key="NavBtn" TargetType="RadioButton">
-      <Setter Property="Foreground" Value="{StaticResource Dim}"/>
+      <Setter Property="Foreground" Value="{DynamicResource Dim}"/>
       <Setter Property="FontSize" Value="13.5"/>
       <Setter Property="Height" Value="36"/>
       <Setter Property="Cursor" Value="Hand"/>
@@ -125,11 +139,11 @@
             </Border>
             <ControlTemplate.Triggers>
               <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="Foreground" Value="{StaticResource Fg}"/>
+                <Setter Property="Foreground" Value="{DynamicResource Fg}"/>
                 <Setter TargetName="B" Property="Background" Value="#10FFFFFF"/>
               </Trigger>
               <Trigger Property="IsChecked" Value="True">
-                <Setter Property="Foreground" Value="{StaticResource Fg}"/>
+                <Setter Property="Foreground" Value="{DynamicResource Fg}"/>
                 <Setter TargetName="B" Property="Background" Value="#1CFFFFFF"/>
               </Trigger>
             </ControlTemplate.Triggers>
@@ -144,7 +158,7 @@
       <Setter Property="Template">
         <Setter.Value>
           <ControlTemplate TargetType="RepeatButton">
-            <Grid Background="Transparent"><Border Height="3" CornerRadius="1.5" Background="{StaticResource Fg}" VerticalAlignment="Center"/></Grid>
+            <Grid Background="Transparent"><Border Height="3" CornerRadius="1.5" Background="{DynamicResource Accent}" VerticalAlignment="Center"/></Grid>
           </ControlTemplate>
         </Setter.Value>
       </Setter>
@@ -160,7 +174,7 @@
     <Style x:Key="Knob" TargetType="Thumb">
       <Setter Property="Template">
         <Setter.Value>
-          <ControlTemplate TargetType="Thumb"><Ellipse Width="11" Height="11" Fill="{StaticResource Fg}"/></ControlTemplate>
+          <ControlTemplate TargetType="Thumb"><Ellipse Width="11" Height="11" Fill="{DynamicResource Fg}"/></ControlTemplate>
         </Setter.Value>
       </Setter>
     </Style>
@@ -171,7 +185,7 @@
         <Setter.Value>
           <ControlTemplate TargetType="Slider">
             <Grid Height="16" Background="Transparent">
-              <Border Height="3" CornerRadius="1.5" Background="{StaticResource Track}" VerticalAlignment="Center"/>
+              <Border Height="3" CornerRadius="1.5" Background="{DynamicResource Track}" VerticalAlignment="Center"/>
               <Track x:Name="PART_Track">
                 <Track.DecreaseRepeatButton><RepeatButton Style="{StaticResource FillBtn}" Command="Slider.DecreaseLarge"/></Track.DecreaseRepeatButton>
                 <Track.IncreaseRepeatButton><RepeatButton Style="{StaticResource EmptyBtn}" Command="Slider.IncreaseLarge"/></Track.IncreaseRepeatButton>
@@ -209,7 +223,7 @@
 
     <!-- строки списка без синей системной подсветки -->
     <Style x:Key="Row" TargetType="ListBoxItem">
-      <Setter Property="Foreground" Value="{StaticResource Fg}"/>
+      <Setter Property="Foreground" Value="{DynamicResource Fg}"/>
       <Setter Property="Focusable" Value="False"/>
       <Setter Property="Template">
         <Setter.Value>
@@ -228,7 +242,7 @@
 
     <!-- ссылка: имя артиста, название альбома -->
     <Style x:Key="Link" TargetType="Button">
-      <Setter Property="Foreground" Value="{StaticResource Dim}"/>
+      <Setter Property="Foreground" Value="{DynamicResource Dim}"/>
       <Setter Property="Cursor" Value="Hand"/>
       <Setter Property="Focusable" Value="False"/>
       <Setter Property="HorizontalAlignment" Value="Left"/>
@@ -238,7 +252,7 @@
             <ContentPresenter x:Name="C" RecognizesAccessKey="False"/>
             <ControlTemplate.Triggers>
               <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="Foreground" Value="{StaticResource Fg}"/>
+                <Setter Property="Foreground" Value="{DynamicResource Fg}"/>
               </Trigger>
             </ControlTemplate.Triggers>
           </ControlTemplate>
@@ -248,7 +262,7 @@
 
     <!-- плитка: альбом, артист, плейлист -->
     <Style x:Key="CardBtn" TargetType="Button">
-      <Setter Property="Foreground" Value="{StaticResource Fg}"/>
+      <Setter Property="Foreground" Value="{DynamicResource Fg}"/>
       <Setter Property="Cursor" Value="Hand"/>
       <Setter Property="Focusable" Value="False"/>
       <Setter Property="Template">
@@ -270,13 +284,13 @@
     <Style TargetType="ContextMenu">
       <Setter Property="OverridesDefaultStyle" Value="True"/>
       <Setter Property="HasDropShadow" Value="False"/>
-      <Setter Property="Foreground" Value="{StaticResource Fg}"/>
+      <Setter Property="Foreground" Value="{DynamicResource Fg}"/>
       <Setter Property="FontFamily" Value="Segoe UI Variable Text, Segoe UI"/>
       <Setter Property="FontSize" Value="13"/>
       <Setter Property="Template">
         <Setter.Value>
           <ControlTemplate TargetType="ContextMenu">
-            <Border Background="#181818" BorderBrush="#2AFFFFFF" BorderThickness="1" CornerRadius="10" Padding="5" Margin="0,0,14,14" MinWidth="220">
+            <Border Background="{DynamicResource MenuBg}" BorderBrush="#2AFFFFFF" BorderThickness="1" CornerRadius="10" Padding="5" Margin="0,0,14,14" MinWidth="220">
               <Border.Effect><DropShadowEffect BlurRadius="20" ShadowDepth="6" Direction="270" Opacity="0.6" Color="Black"/></Border.Effect>
               <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Cycle"/>
             </Border>
@@ -286,13 +300,13 @@
     </Style>
     <Style TargetType="MenuItem">
       <Setter Property="OverridesDefaultStyle" Value="True"/>
-      <Setter Property="Foreground" Value="{StaticResource Fg}"/>
+      <Setter Property="Foreground" Value="{DynamicResource Fg}"/>
       <Setter Property="Template">
         <Setter.Value>
           <ControlTemplate TargetType="MenuItem">
             <Border x:Name="B" Background="Transparent" CornerRadius="6" Padding="10,7">
               <DockPanel>
-                <TextBlock DockPanel.Dock="Left" Width="26" Text="{TemplateBinding Tag}" FontFamily="{StaticResource Icons}" FontSize="13" VerticalAlignment="Center" Foreground="{StaticResource Dim}"/>
+                <TextBlock DockPanel.Dock="Left" Width="26" Text="{TemplateBinding Tag}" FontFamily="{StaticResource Icons}" FontSize="13" VerticalAlignment="Center" Foreground="{DynamicResource Dim}"/>
                 <ContentPresenter ContentSource="Header" VerticalAlignment="Center" RecognizesAccessKey="False"/>
               </DockPanel>
             </Border>

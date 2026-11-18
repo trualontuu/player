@@ -74,7 +74,19 @@ public sealed class TrayMenu : Window
             ((TextBlock)((DockPanel)norm.Child).Children[0]).Text = pb.Normalize ? "" : "";
         };
         norm.ToolTip = "Громкие треки приглушаются, тихие подтягиваются — громкость не скачет";
-        stack.Children.Add(Section(norm));
+
+        // цвета: по клику — следующий режим (как в Island → под обложку → чёрно-белые)
+        static string ColorsText() => "Цвета: " + Array.Find(Player.Core.NoirTheme.Modes, m => m.id == Player.Core.NoirTheme.Mode).name;
+        var colors = Row("", ColorsText(), () => { });
+        colors.MouseLeftButtonUp += (_, _) =>
+        {
+            var modes = Player.Core.NoirTheme.Modes;
+            int i = Array.FindIndex(modes, m => m.id == Player.Core.NoirTheme.Mode);
+            Player.Core.NoirTheme.SetMode(modes[(i + 1) % modes.Length].id);
+            ((TextBlock)((DockPanel)colors.Child).Children[1]).Text = ColorsText();
+        };
+        colors.ToolTip = "Как в Island — тема из настроек острова; под обложку — цвета каждого трека";
+        stack.Children.Add(Section(norm, colors));
 
         stack.Children.Add(Section(
             Row("", "Открыть плеер", () => { CloseAnimated(); open(); }),

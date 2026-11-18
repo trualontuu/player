@@ -16,7 +16,21 @@ public sealed class WaveVisual : FrameworkElement
     readonly DispatcherTimer _t = new(DispatcherPriority.Render) { Interval = TimeSpan.FromMilliseconds(33) };
     double _phase, _amp = 0.25, _target = 0.25;
     bool _active;
-    static readonly Pen[] Pens = MakePens();
+    static Pen[] Pens = MakePens(Colors.White);
+    static Color _tint = Colors.White;
+    /// <summary>Цвет волны и столбиков — акцент текущей палитры (NoirTheme).</summary>
+    public static Color Tint
+    {
+        get => _tint;
+        set
+        {
+            if (_tint == value) return;
+            _tint = value;
+            Pens = MakePens(value);
+            var b = new SolidColorBrush(value); b.Freeze();
+            EqBars.Fill = b;
+        }
+    }
 
     public WaveVisual()
     {
@@ -46,12 +60,12 @@ public sealed class WaveVisual : FrameworkElement
         else if (!run && _t.IsEnabled) _t.Stop();
     }
 
-    static Pen[] MakePens()
+    static Pen[] MakePens(Color c)
     {
         var p = new Pen[5];
         for (int i = 0; i < p.Length; i++)
         {
-            p[i] = new Pen(new SolidColorBrush(Color.FromArgb((byte)(70 - i * 11), 255, 255, 255)), 1.6 - i * 0.18);
+            p[i] = new Pen(new SolidColorBrush(Color.FromArgb((byte)(70 - i * 11), c.R, c.G, c.B)), 1.6 - i * 0.18);
             p[i].Freeze();
         }
         return p;
@@ -102,7 +116,7 @@ public sealed class EqBars : FrameworkElement
     static event Action? PlayingChanged;
     public static bool Playing { get => _playing; set { if (_playing != value) { _playing = value; PlayingChanged?.Invoke(); } } }
 
-    static readonly Brush Fill = Frozen(Color.FromRgb(0xF2, 0xF2, 0xF2));
+    internal static Brush Fill = Frozen(Color.FromRgb(0xF2, 0xF2, 0xF2));
     static Brush Frozen(Color c) { var b = new SolidColorBrush(c); b.Freeze(); return b; }
 
     readonly DispatcherTimer _t = new(DispatcherPriority.Render) { Interval = TimeSpan.FromMilliseconds(40) };

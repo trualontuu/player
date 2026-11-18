@@ -437,10 +437,11 @@ public partial class MainWindow : Window
         _backUrl = url;
         var d = TimeSpan.FromMilliseconds(600);
         var (next, prev) = _backA ? (BackB, BackA) : (BackA, BackB);
-        if (url.Length == 0) { prev.BeginAnimation(OpacityProperty, new DoubleAnimation(0, d)); next.BeginAnimation(OpacityProperty, new DoubleAnimation(0, d)); return; }
+        if (url.Length == 0) { Player.Core.NoirTheme.OnCover(null); prev.BeginAnimation(OpacityProperty, new DoubleAnimation(0, d)); next.BeginAnimation(OpacityProperty, new DoubleAnimation(0, d)); return; }
         Covers.Load(url, 32, img =>
         {
             if (_backUrl != url || img == null) return;
+            Player.Core.NoirTheme.OnCover(img as System.Windows.Media.Imaging.BitmapSource);
             _backA = !_backA;
             next.Source = img;
             next.BeginAnimation(OpacityProperty, new DoubleAnimation(1, d));

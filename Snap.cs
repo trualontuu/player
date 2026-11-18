@@ -33,6 +33,10 @@ public static class Snap
             var s = new PlayerSettings { Volume = 0, Width = 1080, Height = 700, WaveScene = Environment.GetEnvironmentVariable("PLAYER_SCENE") ?? "" };
             Covers.Init(app.Dispatcher);
             Covers.Dpi = 1.5;
+            s.ColorMode = Environment.GetEnvironmentVariable("PLAYER_COLORS") ?? "island";
+            NoirTheme.IslandOverride = Environment.GetEnvironmentVariable("PLAYER_ISLAND_THEME");
+            NoirTheme.Init(s);
+            L($"цвета: {s.ColorMode}");
             pb = new Playback(app.Dispatcher, s);
             var win = new MainWindow(pb, s) { SnapMode = true, ShowActivated = false, WindowStartupLocation = WindowStartupLocation.Manual, Left = -20000, Top = -20000 };
             win.Show();

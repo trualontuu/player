@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:ui="clr-namespace:Player.UI"
         Title="Noir" Width="1080" Height="700" MinWidth="860" MinHeight="580"
-        Background="{StaticResource Bg}" Foreground="{StaticResource Fg}"
+        Background="{DynamicResource Bg}" Foreground="{DynamicResource Fg}"
         FontFamily="Segoe UI Variable Text, Segoe UI" FontSize="13.5"
         UseLayoutRounding="True" SnapsToDevicePixels="True" TextOptions.TextFormattingMode="Ideal">
   <WindowChrome.WindowChrome>
@@ -21,10 +21,10 @@
           <ColumnDefinition Width="40"/>
           <ColumnDefinition Width="54"/>
         </Grid.ColumnDefinitions>
-        <TextBlock x:Name="Num" Foreground="{StaticResource Faint}" FontSize="12.5" VerticalAlignment="Center" HorizontalAlignment="Center"
+        <TextBlock x:Name="Num" Foreground="{DynamicResource Faint}" FontSize="12.5" VerticalAlignment="Center" HorizontalAlignment="Center"
                    Text="{Binding (ItemsControl.AlternationIndex), RelativeSource={RelativeSource AncestorType=ListBoxItem}, Converter={x:Static ui:PlusOne.It}}"/>
         <ui:EqBars x:Name="Eq" Visibility="Collapsed" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-        <Button x:Name="RowPlay" Style="{StaticResource IconBtn}" Width="30" Height="30" FontSize="12" Content="&#xE768;" Foreground="{StaticResource Fg}" Visibility="Collapsed" Tag="{Binding}" Click="RowPlay_Click"/>
+        <Button x:Name="RowPlay" Style="{StaticResource IconBtn}" Width="30" Height="30" FontSize="12" Content="&#xE768;" Foreground="{DynamicResource Fg}" Visibility="Collapsed" Tag="{Binding}" Click="RowPlay_Click"/>
         <Border Grid.Column="1" Width="40" Height="40" CornerRadius="6" Background="#14FFFFFF">
           <Border.Clip><RectangleGeometry Rect="0,0,40,40" RadiusX="6" RadiusY="6"/></Border.Clip>
           <Image Source="{Binding Cover}" Stretch="UniformToFill" RenderOptions.BitmapScalingMode="HighQuality"/>
@@ -39,13 +39,13 @@
             <TextBlock Text="{Binding Album}" FontSize="12.5" TextTrimming="CharacterEllipsis"/>
           </Button>
         <Button x:Name="Heart" Grid.Column="4" Style="{StaticResource IconBtn}" Width="32" Height="32" FontSize="14" Content="&#xEB51;" Opacity="0" Tag="{Binding}" Click="Heart_Click"/>
-        <TextBlock Grid.Column="5" Text="{Binding Duration}" Foreground="{StaticResource Dim}" FontSize="12.5" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,8,0"/>
+        <TextBlock Grid.Column="5" Text="{Binding Duration}" Foreground="{DynamicResource Dim}" FontSize="12.5" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,8,0"/>
       </Grid>
       <DataTemplate.Triggers>
         <DataTrigger Binding="{Binding Liked}" Value="True">
           <Setter TargetName="Heart" Property="Content" Value="&#xEB52;"/>
           <Setter TargetName="Heart" Property="Opacity" Value="1"/>
-          <Setter TargetName="Heart" Property="Foreground" Value="{StaticResource Fg}"/>
+          <Setter TargetName="Heart" Property="Foreground" Value="{DynamicResource Fg}"/>
         </DataTrigger>
         <DataTrigger Binding="{Binding IsPlaying}" Value="True">
           <Setter TargetName="Num" Property="Visibility" Value="Collapsed"/>
@@ -80,7 +80,7 @@
             </Image>
           </Grid>
           <TextBlock x:Name="T" Text="{Binding Title}" FontSize="13.5" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" Margin="0,10,0,0"/>
-          <TextBlock x:Name="S" Text="{Binding Subtitle}" FontSize="12" Foreground="{StaticResource Dim}" TextTrimming="CharacterEllipsis" Margin="0,2,0,0"/>
+          <TextBlock x:Name="S" Text="{Binding Subtitle}" FontSize="12" Foreground="{DynamicResource Dim}" TextTrimming="CharacterEllipsis" Margin="0,2,0,0"/>
         </StackPanel>
       </Button>
       <DataTemplate.Triggers>
@@ -108,9 +108,9 @@
         <ui:EqBars x:Name="Eq" Visibility="Collapsed" HorizontalAlignment="Center" VerticalAlignment="Center"/>
         <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="12,0,6,0">
           <TextBlock x:Name="Title" Text="{Binding T.FullTitle}" FontSize="13.5" TextTrimming="CharacterEllipsis"/>
-          <TextBlock Text="{Binding T.Artists}" Foreground="{StaticResource Dim}" FontSize="12" TextTrimming="CharacterEllipsis" Margin="0,2,0,0"/>
+          <TextBlock Text="{Binding T.Artists}" Foreground="{DynamicResource Dim}" FontSize="12" TextTrimming="CharacterEllipsis" Margin="0,2,0,0"/>
         </StackPanel>
-        <TextBlock x:Name="Dur" Grid.Column="2" Text="{Binding T.Duration}" Foreground="{StaticResource Dim}" FontSize="12" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+        <TextBlock x:Name="Dur" Grid.Column="2" Text="{Binding T.Duration}" Foreground="{DynamicResource Dim}" FontSize="12" VerticalAlignment="Center" HorizontalAlignment="Right"/>
         <Button x:Name="Rm" Grid.Column="2" Style="{StaticResource IconBtn}" Width="30" Height="30" FontSize="10" Content="&#xE711;" Visibility="Collapsed" Tag="{Binding}" Click="QueueRemove_Click" ToolTip="Убрать из очереди"/>
       </Grid>
       <DataTemplate.Triggers>
@@ -126,7 +126,7 @@
           <Setter TargetName="Dur" Property="Visibility" Value="Collapsed"/>
         </MultiDataTrigger>
         <DataTrigger Binding="{Binding Manual}" Value="True">
-          <Setter TargetName="Title" Property="Foreground" Value="{StaticResource Fg}"/>
+          <Setter TargetName="Title" Property="Foreground" Value="{DynamicResource Fg}"/>
         </DataTrigger>
       </DataTemplate.Triggers>
     </DataTemplate>
@@ -149,15 +149,7 @@
         <Image.CacheMode><BitmapCache RenderAtScale="0.25"/></Image.CacheMode>
       </Image>
       <!-- затемнение: сверху обложка просвечивает, книзу уходит в чёрный -->
-      <Rectangle>
-        <Rectangle.Fill>
-          <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-            <GradientStop Color="#B80A0A0A" Offset="0"/>
-            <GradientStop Color="#DA0A0A0A" Offset="0.55"/>
-            <GradientStop Color="#F80A0A0A" Offset="1"/>
-          </LinearGradientBrush>
-        </Rectangle.Fill>
-      </Rectangle>
+      <Rectangle Fill="{DynamicResource Shade}"/>
     </Grid>
 
     <!-- ===================== верх: меню + страница ===================== -->
@@ -168,14 +160,14 @@
       </Grid.ColumnDefinitions>
 
       <!-- боковое меню -->
-      <Border Background="#B80A0A0A" BorderBrush="#14FFFFFF" BorderThickness="0,0,1,0">
+      <Border Background="{DynamicResource SideGlass}" BorderBrush="#14FFFFFF" BorderThickness="0,0,1,0">
         <DockPanel Margin="12,0,12,14">
           <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Height="62" Margin="12,0,0,6">
             <!-- логотип: пластинка, наполовину в тени -->
             <Grid Width="26" Height="26" VerticalAlignment="Center">
-              <Ellipse Stroke="{StaticResource Fg}" StrokeThickness="2"/>
-              <Path Fill="{StaticResource Fg}" Data="M13,2 A11,11 0 0 1 13,24 Z"/>
-              <Ellipse Width="7" Height="7" Fill="#0A0A0A" Stroke="{StaticResource Fg}" StrokeThickness="1.5"/>
+              <Ellipse Stroke="{DynamicResource Fg}" StrokeThickness="2"/>
+              <Path Fill="{DynamicResource Fg}" Data="M13,2 A11,11 0 0 1 13,24 Z"/>
+              <Ellipse Width="7" Height="7" Fill="{DynamicResource Bg}" Stroke="{DynamicResource Fg}" StrokeThickness="1.5"/>
             </Grid>
             <TextBlock Text="noir" FontFamily="Segoe UI Variable Display, Segoe UI" FontSize="19" FontWeight="SemiBold" Margin="10,0,0,3" VerticalAlignment="Center"/>
           </StackPanel>
@@ -197,11 +189,11 @@
             <Border Width="30" Height="30" CornerRadius="15" Background="#1FFFFFFF" BorderBrush="#2AFFFFFF" BorderThickness="1">
               <TextBlock x:Name="AccountLetter" FontSize="12.5" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
             </Border>
-            <TextBlock x:Name="Account" Foreground="{StaticResource Dim}" FontSize="12.5" Margin="10,0,0,1" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" MaxWidth="150"/>
+            <TextBlock x:Name="Account" Foreground="{DynamicResource Dim}" FontSize="12.5" Margin="10,0,0,1" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" MaxWidth="150"/>
           </StackPanel>
 
           <DockPanel Margin="0,24,0,0">
-            <TextBlock DockPanel.Dock="Top" Text="ПЛЕЙЛИСТЫ" FontSize="10.5" FontWeight="SemiBold" Foreground="{StaticResource Faint}" Margin="12,0,0,8"/>
+            <TextBlock DockPanel.Dock="Top" Text="ПЛЕЙЛИСТЫ" FontSize="10.5" FontWeight="SemiBold" Foreground="{DynamicResource Faint}" Margin="12,0,0,8"/>
             <ScrollViewer VerticalScrollBarVisibility="Auto" Focusable="False">
               <StackPanel x:Name="PlaylistNav"/>
             </ScrollViewer>
@@ -223,7 +215,7 @@
           <StackPanel x:Name="WaveContent" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,38,0,6">
             <!-- обложка (масштаб подбирается под высоту окна — FitHero) -->
             <Grid x:Name="HeroArt" Width="220" Height="220" HorizontalAlignment="Center">
-              <Border CornerRadius="18" Background="#141414">
+              <Border CornerRadius="18" Background="{DynamicResource Tile}">
                 <Border.Effect><DropShadowEffect BlurRadius="48" ShadowDepth="16" Direction="270" Opacity="0.75" Color="Black"/></Border.Effect>
               </Border>
               <Border CornerRadius="18" BorderBrush="#1AFFFFFF" BorderThickness="1" Panel.ZIndex="2"/>
@@ -243,7 +235,7 @@
               </Grid>
             </Grid>
 
-            <TextBlock x:Name="HeroLabel" Text="МОЯ ВОЛНА" FontSize="11" FontWeight="SemiBold" Foreground="{StaticResource Dim}" HorizontalAlignment="Center" Margin="0,28,0,0"/>
+            <TextBlock x:Name="HeroLabel" Text="МОЯ ВОЛНА" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource Dim}" HorizontalAlignment="Center" Margin="0,28,0,0"/>
             <TextBlock x:Name="HeroTitle" Text="Бесконечный поток под ваш вкус" FontFamily="Segoe UI Variable Display, Segoe UI" FontSize="28" FontWeight="SemiBold"
                        HorizontalAlignment="Center" TextTrimming="CharacterEllipsis" MaxWidth="560" Margin="0,6,0,0"/>
             <Button x:Name="HeroArtistBtn" Style="{StaticResource Link}" HorizontalAlignment="Center" Margin="0,3,0,0">
@@ -264,7 +256,7 @@
             <WrapPanel x:Name="WaveScene" HorizontalAlignment="Center" Margin="0,20,0,0"/>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,2,0,0">
               <Button x:Name="AutoCs2" Style="{StaticResource Pill}" BorderBrush="Transparent" Background="Transparent" Padding="10,4" FontSize="12"/>
-              <Button x:Name="TuneToggle" Style="{StaticResource Pill}" BorderBrush="Transparent" Background="Transparent" Padding="10,4" FontSize="12" Foreground="{StaticResource Dim}" Content="Настроить ▾"/>
+              <Button x:Name="TuneToggle" Style="{StaticResource Pill}" BorderBrush="Transparent" Background="Transparent" Padding="10,4" FontSize="12" Foreground="{DynamicResource Dim}" Content="Настроить ▾"/>
             </StackPanel>
             <Border x:Name="TunePanel" Visibility="Collapsed" HorizontalAlignment="Center" Margin="0,8,0,0" Padding="18,12,18,10"
                     CornerRadius="16" Background="#10FFFFFF" BorderBrush="#16FFFFFF" BorderThickness="1">
@@ -277,9 +269,9 @@
                   <RowDefinition/>
                   <RowDefinition/>
                 </Grid.RowDefinitions>
-                <TextBlock Text="ХАРАКТЕР" FontSize="10.5" FontWeight="SemiBold" Foreground="{StaticResource Faint}" VerticalAlignment="Center" Margin="0,0,14,0"/>
+                <TextBlock Text="ХАРАКТЕР" FontSize="10.5" FontWeight="SemiBold" Foreground="{DynamicResource Faint}" VerticalAlignment="Center" Margin="0,0,14,0"/>
                 <WrapPanel x:Name="WaveDiv" Grid.Column="1"/>
-                <TextBlock Grid.Row="1" Text="НАСТРОЕНИЕ" FontSize="10.5" FontWeight="SemiBold" Foreground="{StaticResource Faint}" VerticalAlignment="Center" Margin="0,0,14,0"/>
+                <TextBlock Grid.Row="1" Text="НАСТРОЕНИЕ" FontSize="10.5" FontWeight="SemiBold" Foreground="{DynamicResource Faint}" VerticalAlignment="Center" Margin="0,0,14,0"/>
                 <WrapPanel x:Name="WaveMood" Grid.Row="1" Grid.Column="1"/>
               </Grid>
             </Border>
@@ -294,7 +286,7 @@
             <DockPanel x:Name="ListHeader">
               <!-- обложка списка -->
               <Grid DockPanel.Dock="Left" Width="140" Height="140" Margin="0,0,26,0">
-                <Border CornerRadius="14" Background="#141414">
+                <Border CornerRadius="14" Background="{DynamicResource Tile}">
                   <Border.Effect><DropShadowEffect BlurRadius="34" ShadowDepth="12" Direction="270" Opacity="0.65" Color="Black"/></Border.Effect>
                 </Border>
                 <Grid>
@@ -312,7 +304,7 @@
                 </Grid>
               </Grid>
               <StackPanel VerticalAlignment="Bottom">
-                <TextBlock x:Name="ListKind" Text="ПЛЕЙЛИСТ" FontSize="11" FontWeight="SemiBold" Foreground="{StaticResource Dim}"/>
+                <TextBlock x:Name="ListKind" Text="ПЛЕЙЛИСТ" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource Dim}"/>
                 <TextBlock x:Name="ListTitle" FontFamily="Segoe UI Variable Display, Segoe UI" FontSize="38" FontWeight="Bold" TextTrimming="CharacterEllipsis" Margin="0,0,0,0"/>
                 <Button x:Name="ListSub" Style="{StaticResource Link}" Visibility="Collapsed" FontSize="14" Margin="0,0,0,2"/>
                 <StackPanel Orientation="Horizontal" Margin="0,10,0,2">
@@ -320,13 +312,13 @@
                   <Button x:Name="ListShuffle" Style="{StaticResource Pill}" Margin="0,0,16,0">
                     <StackPanel Orientation="Horizontal"><TextBlock Text="&#xE8B1;" FontFamily="{StaticResource Icons}" Margin="0,1,8,0"/><TextBlock Text="Перемешать"/></StackPanel>
                   </Button>
-                  <TextBlock x:Name="ListInfo" Foreground="{StaticResource Dim}" VerticalAlignment="Center"/>
+                  <TextBlock x:Name="ListInfo" Foreground="{DynamicResource Dim}" VerticalAlignment="Center"/>
                 </StackPanel>
               </StackPanel>
             </DockPanel>
 
             <!-- заголовки колонок -->
-            <Grid Margin="10,24,26,0" TextElement.Foreground="{StaticResource Faint}" TextElement.FontSize="10.5">
+            <Grid Margin="10,24,26,0" TextElement.Foreground="{DynamicResource Faint}" TextElement.FontSize="10.5">
               <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="38"/>
                 <ColumnDefinition Width="44"/>
@@ -348,7 +340,7 @@
                      VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling"
                      VirtualizingPanel.ScrollUnit="Pixel" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                      AlternationCount="100000" Focusable="False" ItemTemplate="{StaticResource TrackRow}"/>
-            <TextBlock x:Name="ListEmpty" Foreground="{StaticResource Dim}" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed"/>
+            <TextBlock x:Name="ListEmpty" Foreground="{DynamicResource Dim}" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed"/>
           </Grid>
         </DockPanel>
 
@@ -359,9 +351,9 @@
                 <StackPanel x:Name="SearchRow" Orientation="Horizontal" Margin="0,0,0,24">
                 <Border x:Name="SearchBox" Height="46" CornerRadius="23" Background="#14FFFFFF" BorderBrush="#1FFFFFFF" BorderThickness="1" Margin="0,0,14,0" HorizontalAlignment="Left" Width="440">
                   <Grid Margin="18,0">
-                    <TextBlock Text="&#xE721;" FontFamily="{StaticResource Icons}" Foreground="{StaticResource Dim}" VerticalAlignment="Center"/>
-                    <TextBlock x:Name="SearchHint" Text="Трек, исполнитель…" Foreground="{StaticResource Faint}" Margin="30,0,0,1" VerticalAlignment="Center" IsHitTestVisible="False" FontSize="15"/>
-                    <TextBox x:Name="SearchText" Margin="28,0,0,0" Background="Transparent" BorderThickness="0" Foreground="{StaticResource Fg}" CaretBrush="{StaticResource Fg}" SelectionBrush="#555" FontSize="15" VerticalAlignment="Center">
+                    <TextBlock Text="&#xE721;" FontFamily="{StaticResource Icons}" Foreground="{DynamicResource Dim}" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="SearchHint" Text="Трек, исполнитель…" Foreground="{DynamicResource Faint}" Margin="30,0,0,1" VerticalAlignment="Center" IsHitTestVisible="False" FontSize="15"/>
+                    <TextBox x:Name="SearchText" Margin="28,0,0,0" Background="Transparent" BorderThickness="0" Foreground="{DynamicResource Fg}" CaretBrush="{DynamicResource Fg}" SelectionBrush="#555" FontSize="15" VerticalAlignment="Center">
                       <TextBox.Template>
                         <ControlTemplate TargetType="TextBox"><ScrollViewer x:Name="PART_ContentHost" Focusable="False"/></ControlTemplate>
                       </TextBox.Template>
@@ -372,22 +364,22 @@
                   <Button x:Name="SrcSc" Style="{StaticResource Pill}" Content="SoundCloud" VerticalAlignment="Center"/>
                 </StackPanel>
             <StackPanel x:Name="BrowseBody"/>
-            <TextBlock x:Name="BrowseEmpty" Foreground="{StaticResource Dim}" FontSize="14" HorizontalAlignment="Center" Margin="0,120,0,0" Visibility="Collapsed"/>
+            <TextBlock x:Name="BrowseEmpty" Foreground="{DynamicResource Dim}" FontSize="14" HorizontalAlignment="Center" Margin="0,120,0,0" Visibility="Collapsed"/>
           </StackPanel>
         </ScrollViewer>
 
         <!-- вход -->
-        <Grid x:Name="LoginPage" Visibility="Collapsed" Background="{StaticResource Bg}">
+        <Grid x:Name="LoginPage" Visibility="Collapsed" Background="{DynamicResource Bg}">
           <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Width="380">
             <TextBlock Text="Яндекс Музыка" FontSize="30" FontWeight="SemiBold" HorizontalAlignment="Center"/>
-            <TextBlock x:Name="LoginText" Text="Войдите, чтобы слушать свою музыку. Пароль вводится на сайте Яндекса — сюда попадает только ключ доступа." TextWrapping="Wrap" TextAlignment="Center" Foreground="{StaticResource Dim}" Margin="0,10,0,22"/>
+            <TextBlock x:Name="LoginText" Text="Войдите, чтобы слушать свою музыку. Пароль вводится на сайте Яндекса — сюда попадает только ключ доступа." TextWrapping="Wrap" TextAlignment="Center" Foreground="{DynamicResource Dim}" Margin="0,10,0,22"/>
             <TextBlock x:Name="LoginCode" FontSize="40" FontWeight="SemiBold" HorizontalAlignment="Center" Visibility="Collapsed" Margin="0,0,0,16" FontFamily="Consolas"/>
             <Button x:Name="LoginBtn" Style="{StaticResource PillOn}" HorizontalAlignment="Center" Padding="26,9" Content="Войти через Яндекс"/>
           </StackPanel>
         </Grid>
 
         <!-- очередь -->
-        <Border x:Name="QueuePanel" Visibility="Collapsed" HorizontalAlignment="Right" Width="360" Background="#F50E0E0E" BorderBrush="#1FFFFFFF" BorderThickness="1,0,0,0">
+        <Border x:Name="QueuePanel" Visibility="Collapsed" HorizontalAlignment="Right" Width="360" Background="{DynamicResource PanelBg}" BorderBrush="#1FFFFFFF" BorderThickness="1,0,0,0">
           <Border.RenderTransform><TranslateTransform/></Border.RenderTransform>
           <Border.Effect><DropShadowEffect BlurRadius="30" ShadowDepth="0" Opacity="0.6" Color="Black"/></Border.Effect>
           <DockPanel Margin="0,40,0,0">
@@ -395,14 +387,14 @@
               <Button x:Name="QueueClose" DockPanel.Dock="Right" Style="{StaticResource IconBtn}" FontSize="10" Content="&#xE8BB;" ToolTip="Закрыть"/>
               <TextBlock Text="Очередь" FontFamily="Segoe UI Variable Display, Segoe UI" FontSize="22" FontWeight="SemiBold" VerticalAlignment="Center"/>
             </DockPanel>
-            <TextBlock DockPanel.Dock="Top" Text="СЕЙЧАС ИГРАЕТ" FontSize="10.5" FontWeight="SemiBold" Foreground="{StaticResource Faint}" Margin="22,0,0,6"/>
+            <TextBlock DockPanel.Dock="Top" Text="СЕЙЧАС ИГРАЕТ" FontSize="10.5" FontWeight="SemiBold" Foreground="{DynamicResource Faint}" Margin="22,0,0,6"/>
             <ListBox x:Name="QueueNow" DockPanel.Dock="Top" Background="Transparent" BorderThickness="0" ItemContainerStyle="{StaticResource Row}" ItemTemplate="{StaticResource QueueRow}" Margin="12,0,12,0" Focusable="False" ScrollViewer.VerticalScrollBarVisibility="Disabled"/>
-            <TextBlock x:Name="QueueFrom" DockPanel.Dock="Top" FontSize="10.5" FontWeight="SemiBold" Foreground="{StaticResource Faint}" Margin="22,18,14,6" TextTrimming="CharacterEllipsis"/>
+            <TextBlock x:Name="QueueFrom" DockPanel.Dock="Top" FontSize="10.5" FontWeight="SemiBold" Foreground="{DynamicResource Faint}" Margin="22,18,14,6" TextTrimming="CharacterEllipsis"/>
             <Grid>
               <ListBox x:Name="QueueList" Background="Transparent" BorderThickness="0" ItemContainerStyle="{StaticResource Row}" ItemTemplate="{StaticResource QueueRow}"
                        VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling" VirtualizingPanel.ScrollUnit="Pixel"
                        ScrollViewer.HorizontalScrollBarVisibility="Disabled" Margin="12,0,6,12" Focusable="False" AllowDrop="True"/>
-              <TextBlock x:Name="QueueEmpty" Text="Дальше ничего нет" Foreground="{StaticResource Dim}" HorizontalAlignment="Center" Margin="0,40,0,0" Visibility="Collapsed"/>
+              <TextBlock x:Name="QueueEmpty" Text="Дальше ничего нет" Foreground="{DynamicResource Dim}" HorizontalAlignment="Center" Margin="0,40,0,0" Visibility="Collapsed"/>
             </Grid>
           </DockPanel>
         </Border>
@@ -419,14 +411,14 @@
         </StackPanel>
 
         <!-- всплывающее сообщение -->
-        <Border x:Name="Toast" Visibility="Collapsed" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="0,0,0,16" Background="{StaticResource Fg}" CornerRadius="18" Padding="16,8">
+        <Border x:Name="Toast" Visibility="Collapsed" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="0,0,0,16" Background="{DynamicResource Fg}" CornerRadius="18" Padding="16,8">
           <TextBlock x:Name="ToastText" Foreground="#0A0A0A" FontSize="13"/>
         </Border>
       </Grid>
     </Grid>
 
     <!-- ===================== низ: сейчас играет ===================== -->
-    <Border Grid.Row="1" Height="88" Background="#E00A0A0A" BorderBrush="#14FFFFFF" BorderThickness="0,1,0,0">
+    <Border Grid.Row="1" Height="88" Background="{DynamicResource BarGlass}" BorderBrush="#14FFFFFF" BorderThickness="0,1,0,0">
       <Grid Margin="18,0">
         <Grid.ColumnDefinitions>
           <ColumnDefinition Width="*" MinWidth="230"/>
@@ -441,7 +433,7 @@
           </Border>
           <Button x:Name="NowLike" DockPanel.Dock="Right" Style="{StaticResource IconBtn}" Content="&#xEB51;" FontSize="15" Margin="4,0,8,0"/>
           <StackPanel VerticalAlignment="Center" Margin="14,0,4,0">
-            <Button x:Name="NowTitleBtn" Style="{StaticResource Link}" Foreground="{StaticResource Fg}" ToolTip="К альбому">
+            <Button x:Name="NowTitleBtn" Style="{StaticResource Link}" Foreground="{DynamicResource Fg}" ToolTip="К альбому">
               <TextBlock x:Name="NowTitle" FontSize="14" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/>
             </Button>
             <Button x:Name="NowArtistBtn" Style="{StaticResource Link}" Margin="0,3,0,0" ToolTip="К артисту">
@@ -464,9 +456,9 @@
               <ColumnDefinition Width="*"/>
               <ColumnDefinition Width="46"/>
             </Grid.ColumnDefinitions>
-            <TextBlock x:Name="PosText" Text="0:00" Foreground="{StaticResource Dim}" FontSize="11.5" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,0"/>
+            <TextBlock x:Name="PosText" Text="0:00" Foreground="{DynamicResource Dim}" FontSize="11.5" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,0"/>
             <Slider x:Name="Seek" Grid.Column="1" Style="{StaticResource Thin}" Minimum="0" Maximum="1" VerticalAlignment="Center"/>
-            <TextBlock x:Name="DurText" Grid.Column="2" Text="0:00" Foreground="{StaticResource Dim}" FontSize="11.5" VerticalAlignment="Center" Margin="10,0,0,0"/>
+            <TextBlock x:Name="DurText" Grid.Column="2" Text="0:00" Foreground="{DynamicResource Dim}" FontSize="11.5" VerticalAlignment="Center" Margin="10,0,0,0"/>
           </Grid>
         </StackPanel>
 

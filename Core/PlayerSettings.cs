@@ -12,6 +12,8 @@ public sealed class PlayerSettings
     public double Volume { get; set; } = 0.6;
     /// <summary>Выравнивать громкость треков (громкие приглушаются до −14 LUFS).</summary>
     public bool Normalize { get; set; } = true;
+    /// <summary>Цвета: island — как тема Island, cover — под обложку, mono — чёрно-белые.</summary>
+    public string ColorMode { get; set; } = "island";
     /// <summary>Максимальный битрейт: 320 или 192 (экономия трафика).</summary>
     public int MaxKbps { get; set; } = 320;
     /// <summary>Обесцвечивать обложки (по умолчанию цветные — интерфейс при этом остаётся ч/б).</summary>

@@ -46,6 +46,7 @@ public partial class App : Application
         Covers.Init(Dispatcher);
         Covers.Color = !_s.GrayCovers;
         _pb = new Playback(Dispatcher, _s);
+        Player.Core.NoirTheme.Init(_s);
         _win = new MainWindow(_pb, _s);
         Covers.Dpi = 1.5;
         _win.Loaded += (_, _) => Covers.Dpi = System.Windows.Media.VisualTreeHelper.GetDpi(_win).DpiScaleX;
