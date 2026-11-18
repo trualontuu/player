@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -25,6 +26,24 @@ public partial class MainWindow
         ("Пауза / играть", "", () => _s.HotkeyPause, v => _s.HotkeyPause = v, () => { if (_pb.Current == null) _ = _pb.PlayWave(); else _pb.Toggle(); }),
         ("Убрать трек", "В CS2-волне — артист в стоп-лист и следующий; в обычной — «не нравится» и следующий", () => _s.HotkeyBan, v => _s.HotkeyBan = v, () => _ = Dislike()),
     };
+
+    /// <summary>Состояние для виджета OBS (снимок в UI-потоке).</summary>
+    public Task<object> WidgetState() => Dispatcher.InvokeAsync(() =>
+    {
+        var t = _pb.Current;
+        return (object)new
+        {
+            playing = _pb.IsPlaying,
+            title = t?.FullTitle ?? "",
+            artist = t?.Artists ?? "",
+            cover = t?.CoverUrl(200) ?? "",
+            pos = _pb.Position.TotalSeconds,
+            dur = _pb.Duration.TotalSeconds,
+            accent = Player.Core.NoirTheme.Hex("Accent"),
+            bg = Player.Core.NoirTheme.Hex("Bg"),
+            dim = Player.Core.NoirTheme.Hex("Dim"),
+        };
+    }).Task;
 
     /// <summary>Перерегистрировать все сочетания. Занятые другими программами — в _hotkeyFailed.</summary>
     public void ApplyHotkeys()

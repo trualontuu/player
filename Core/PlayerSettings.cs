@@ -15,6 +15,8 @@ public sealed class PlayerSettings
     /// <summary>Цвета: island — как тема Island, cover — под обложку, mono — чёрно-белые.</summary>
     public string ColorMode { get; set; } = "island";
     /// <summary>Глобальные сочетания — работают и в игре (обычный RegisterHotKey, в процесс игры не лезем).</summary>
+    /// <summary>Виджет «сейчас играет» для OBS на http://127.0.0.1:47800/.</summary>
+    public bool ObsWidget { get; set; } = true;
     public string HotkeyNext { get; set; } = "Ctrl+Alt+Right";
     public string HotkeyPrev { get; set; } = "Ctrl+Alt+Left";
     public string HotkeyPause { get; set; } = "Ctrl+Alt+Down";

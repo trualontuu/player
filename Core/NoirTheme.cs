@@ -47,6 +47,9 @@ public static class NoirTheme
         Refresh(animate: false);
     }
 
+    /// <summary>Текущий цвет палитры в виде #RRGGBB (для виджета OBS).</summary>
+    public static string Hex(string key) => _cur.TryGetValue(key, out var c) ? $"#{c.R:X2}{c.G:X2}{c.B:X2}" : "";
+
     public static string Mode => _s?.ColorMode ?? "island";
 
     public static void SetMode(string mode)

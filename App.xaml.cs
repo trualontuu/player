@@ -57,6 +57,7 @@ public partial class App : Application
         _host.ShowTray("Noir");
         _win.HotkeyHost = (_host.ClearHotkeys, _host.RegisterHotkey);
         _win.ApplyHotkeys();
+        if (_s.ObsWidget) Player.Core.ObsWidget.Start(_win.WidgetState);
 
         DispatcherUnhandledException += (_, ex) => { ex.Handled = true; try { _win?.ShowToast("Ошибка: " + ex.Exception.Message); } catch { } };
 

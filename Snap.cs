@@ -113,6 +113,16 @@ public static class Snap
                 await Task.Delay(3000);
                 L($"через 3 с позиция {pb.Position.TotalSeconds:F1} с из {pb.Duration.TotalSeconds:F0}");
                 Save(win, Path.Combine(dir, "4_wave_playing.png"));
+                if (Environment.GetEnvironmentVariable("PLAYER_WIDGET") == "1")
+                {
+                    ObsWidget.Start(win.WidgetState);
+                    using var http = new System.Net.Http.HttpClient();
+                    var now = await http.GetStringAsync(ObsWidget.Url + "now");
+                    L($"виджет OBS: {(ObsWidget.Running ? "работает" : "ошибка " + ObsWidget.Error)}, /now = {now}");
+                    File.WriteAllText(Path.Combine(dir, "widget_ready"), "1");
+                    await Task.Delay(15000); // снимок снаружи (Chrome headless)
+                    ObsWidget.Stop();
+                }
                 // ползунок: нажали — перетаскивание должно длиться до отпускания
                 {
                     var fSeeking = typeof(MainWindow).GetField("_seeking", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)!;
