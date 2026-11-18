@@ -19,9 +19,11 @@ public static class SliderDrag
             s.Value = Math.Clamp(track.ValueFromPoint(e.GetPosition(track)), s.Minimum, s.Maximum);
         }
 
+        bool dragging = false;
         s.AddHandler(UIElement_PreviewDown, new MouseButtonEventHandler((_, e) =>
         {
             if (!s.IsEnabled) return;
+            dragging = true;
             onDown?.Invoke();
             s.CaptureMouse();
             SetFrom(e);
@@ -35,8 +37,15 @@ public static class SliderDrag
             s.ReleaseMouseCapture();
             e.Handled = true;
         }), true);
-        // захват могли отнять (Alt+Tab и т.п.) — всё равно завершаем перетаскивание
-        s.LostMouseCapture += (_, _) => onUp?.Invoke();
+        // Завершаем, только когда мышь потерял сам ползунок (отпустили или отняли Alt+Tab).
+        // LostMouseCapture всплывает и от вложенного бегунка: если реагировать на него,
+        // перемотка срабатывала прямо при нажатии, и дальше ползунок дёргал таймер позиции.
+        s.LostMouseCapture += (_, _) =>
+        {
+            if (!dragging || s.IsMouseCaptured) return;
+            dragging = false;
+            onUp?.Invoke();
+        };
     }
 
     static readonly System.Windows.RoutedEvent UIElement_PreviewDown = System.Windows.UIElement.PreviewMouseLeftButtonDownEvent;

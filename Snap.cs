@@ -109,8 +109,23 @@ public static class Snap
                 await Task.Delay(3000);
                 L($"через 3 с позиция {pb.Position.TotalSeconds:F1} с из {pb.Duration.TotalSeconds:F0}");
                 Save(win, Path.Combine(dir, "4_wave_playing.png"));
+                // ползунок: нажали — перетаскивание должно длиться до отпускания
+                {
+                    var fSeeking = typeof(MainWindow).GetField("_seeking", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)!;
+                    var down = new System.Windows.Input.MouseButtonEventArgs(System.Windows.Input.Mouse.PrimaryDevice, 0, System.Windows.Input.MouseButton.Left) { RoutedEvent = UIElement.PreviewMouseLeftButtonDownEvent };
+                    win.Seek.RaiseEvent(down);
+                    await Task.Delay(600);
+                    bool during = (bool)fSeeking.GetValue(win)!;
+                    var up = new System.Windows.Input.MouseButtonEventArgs(System.Windows.Input.Mouse.PrimaryDevice, 0, System.Windows.Input.MouseButton.Left) { RoutedEvent = UIElement.PreviewMouseLeftButtonUpEvent };
+                    win.Seek.RaiseEvent(up);
+                    await Task.Delay(200);
+                    bool after = (bool)fSeeking.GetValue(win)!;
+                    L($"ползунок: во время нажатия тянется={during} (нужно True), после отпускания={after} (нужно False), захват={win.Seek.IsMouseCaptured}");
+                }
                 pb.Seek(TimeSpan.FromSeconds(60));
-                await Task.Delay(800);
+                await SeekTrace(pb, L, "ЯМ 60");
+                pb.Seek(TimeSpan.FromSeconds(20));
+                await SeekTrace(pb, L, "ЯМ назад 20");
                 L($"перемотка на 60 с с первого раза: позиция {pb.Position.TotalSeconds:F1} с");
 
                 // очередь: «играть следующим» и «добавить в очередь»
@@ -141,8 +156,11 @@ public static class Snap
                     pb.PlayList(scList, 0, "SoundCloud тест");
                     for (int i = 0; i < 80 && !(pb.IsPlaying && !pb.IsBuffering && pb.Position > TimeSpan.FromSeconds(0.5)); i++) await Task.Delay(100);
                     L($"SoundCloud: до звука {sw.ElapsedMilliseconds - t0} мс, «{pb.Current?.FullTitle}» — {pb.Current?.Artists}, позиция {pb.Position.TotalSeconds:F1} с из {pb.Duration.TotalSeconds:F0}");
+                    L($"SoundCloud: CanSeek={pb.CanSeek}");
                     pb.Seek(TimeSpan.FromSeconds(40));
-                    await Task.Delay(1500);
+                    await SeekTrace(pb, L, "SC 40");
+                    pb.Seek(TimeSpan.FromSeconds(10));
+                    await SeekTrace(pb, L, "SC назад 10");
                     L($"SoundCloud: перемотка на 40 с → {pb.Position.TotalSeconds:F1} с");
                     Save(win, Path.Combine(dir, "6_sc_playing.png"));
                 }
@@ -157,6 +175,13 @@ public static class Snap
         File.WriteAllText(Path.Combine(dir, "report.txt"), log.ToString());
         pb?.Dispose();
         app.Shutdown();
+    }
+
+    static async Task SeekTrace(Playback pb, Action<string> L, string name)
+    {
+        var sb = new StringBuilder();
+        for (int i = 0; i < 25; i++) { sb.Append($"{pb.Position.TotalSeconds:F1}{(pb.IsBuffering ? "b" : "")} "); await Task.Delay(100); }
+        L($"{name}: {sb}");
     }
 
     static void Save(Window w, string file)

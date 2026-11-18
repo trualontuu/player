@@ -33,6 +33,8 @@ public partial class MainWindow : Window
     CancellationTokenSource? _searchCts;
     Track? _nowTrack;
     bool _seeking, _settingVol;
+    TimeSpan? _seekTo;
+    DateTime _seekHold;
     double _volBeforeMute = 0.6;
 
     public bool SnapMode;
@@ -120,7 +122,11 @@ public partial class MainWindow : Window
             if (!_seeking) return;
             _seeking = false;
             var d = _pb.Duration;
-            if (d > TimeSpan.Zero) _pb.Seek(TimeSpan.FromMilliseconds(Seek.Value * d.TotalMilliseconds));
+            if (d <= TimeSpan.Zero) return;
+            var to = TimeSpan.FromMilliseconds(Seek.Value * d.TotalMilliseconds);
+            _pb.Seek(to);
+            // пока поток догоняет новую позицию, не даём таймеру отбросить ползунок назад
+            _seekTo = to; _seekHold = DateTime.UtcNow.AddSeconds(2);
         });
         SliderDrag.Attach(Vol, null, () => _s.SaveSoon());
         Seek.ValueChanged += (_, _) => { if (_seeking) PosText.Text = Fmt(TimeSpan.FromMilliseconds(Seek.Value * _pb.Duration.TotalMilliseconds)); };
@@ -417,7 +423,7 @@ public partial class MainWindow : Window
         if (t != null) Covers.Load(t.CoverUrl(200), 54, img => { if (_pb.Current == t) NowCover.Source = img; });
         DurText.Text = t != null ? t.Duration : "0:00";
         PosText.Text = "0:00";
-        Seek.Value = 0;
+        Seek.Value = 0; _seekTo = null;
     }
 
     bool _backA;
@@ -543,6 +549,11 @@ public partial class MainWindow : Window
         if (_seeking) return;
         var d = _pb.Duration;
         var p = _pb.Position;
+        if (_seekTo is { } to)
+        {
+            if (DateTime.UtcNow < _seekHold && Math.Abs((p - to).TotalSeconds) > 1.5) p = to;
+            else _seekTo = null;
+        }
         if (d > TimeSpan.Zero) Seek.Value = Math.Clamp(p.TotalMilliseconds / d.TotalMilliseconds, 0, 1);
         PosText.Text = Fmt(p);
         if (d > TimeSpan.Zero) DurText.Text = Fmt(d);
