@@ -93,18 +93,18 @@ public partial class MainWindow
         // виджет для OBS
         var obsStatus = new TextBlock { FontSize = 12.5, Foreground = (Brush)FindResource("Dim"), TextWrapping = TextWrapping.Wrap };
         void PaintObs() => obsStatus.Text = !_s.ObsWidget ? "Выключен"
-            : ObsWidget.Running ? $"Адрес: {ObsWidget.Url} — в OBS: Источники → + → Браузер, вставить адрес, ширина 460, высота 112"
+            : ObsWidget.Running ? $"Адрес: {ObsWidget.Url} — в OBS: Источники → + → Браузер, вставить адрес, ширина 320, высота 72"
             : "Не запустился: " + ObsWidget.Error;
         PaintObs();
         body.Children.Add(Group("Виджет для OBS",
-            SRow("«Сейчас играет» на стриме", "Карточка в стиле Noir: обложка, трек, прогресс и цвета текущей палитры. Видна только на этом компьютере",
+            SRow("«Сейчас играет» на стриме", "Компактная чёрно-белая карточка: обложка, трек, тонкая полоса прогресса. Видна только на этом компьютере",
                 Switch(_s.ObsWidget, on =>
                 {
                     _s.ObsWidget = on; _s.SaveSoon();
                     if (on) ObsWidget.Start(WidgetState); else ObsWidget.Stop();
                     PaintObs();
                 }), obsStatus),
-            SRow("Скопировать адрес", "Варианты: …/?hide=paused — прятать на паузе, …/?scale=1.5 — крупнее, …/?pos=right — справа",
+            SRow("Скопировать адрес", "Варианты: …/?hide=paused — прятать на паузе, …/?scale=1.5 — крупнее, …/?pos=right — справа, …/?color=1 — в цветах Noir",
                 Button("Копировать", () => { try { Clipboard.SetText(ObsWidget.Url); ShowToast("Адрес виджета скопирован"); } catch { } }))));
 
         var hk = new List<FrameworkElement>

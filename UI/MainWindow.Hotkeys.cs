@@ -24,7 +24,7 @@ public partial class MainWindow
         ("Следующий трек", "", () => _s.HotkeyNext, v => _s.HotkeyNext = v, () => _pb.Next()),
         ("Предыдущий трек", "", () => _s.HotkeyPrev, v => _s.HotkeyPrev = v, () => _pb.Prev()),
         ("Пауза / играть", "", () => _s.HotkeyPause, v => _s.HotkeyPause = v, () => { if (_pb.Current == null) _ = _pb.PlayWave(); else _pb.Toggle(); }),
-        ("Убрать трек", "В CS2-волне — артист в стоп-лист и следующий; в обычной — «не нравится» и следующий", () => _s.HotkeyBan, v => _s.HotkeyBan = v, () => _ = Dislike()),
+        ("Лайк трека", "Поставить или снять «Мне нравится» у играющего трека (у SoundCloud лайков нет)", () => _s.HotkeyLike, v => _s.HotkeyLike = v, () => { if (_pb.Current is { IsSc: false }) _ = _pb.LikeCurrent(); }),
     };
 
     /// <summary>Состояние для виджета OBS (снимок в UI-потоке).</summary>

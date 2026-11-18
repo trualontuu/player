@@ -115,6 +115,7 @@ public static class Snap
                 Save(win, Path.Combine(dir, "4_wave_playing.png"));
                 if (Environment.GetEnvironmentVariable("PLAYER_WIDGET") == "1")
                 {
+                    ObsWidget.Port = 47801;
                     ObsWidget.Start(win.WidgetState);
                     using var http = new System.Net.Http.HttpClient();
                     var now = await http.GetStringAsync(ObsWidget.Url + "now");
@@ -186,7 +187,7 @@ public static class Snap
             {
                 win.HotkeyHost = (host.ClearHotkeys, host.RegisterHotkey);
                 win.ApplyHotkeys();
-                L($"горячие клавиши: {s.HotkeyNext}, {s.HotkeyPrev}, {s.HotkeyPause}, {s.HotkeyBan}; заняты: {(win.HotkeyFailed.Count == 0 ? "нет" : string.Join(", ", win.HotkeyFailed))}");
+                L($"горячие клавиши: {s.HotkeyNext}, {s.HotkeyPrev}, {s.HotkeyPause}, {s.HotkeyLike}; заняты: {(win.HotkeyFailed.Count == 0 ? "нет" : string.Join(", ", win.HotkeyFailed))}");
                 win.NavSettings.IsChecked = true;
                 await Task.Delay(700);
                 Save(win, Path.Combine(dir, "7_settings.png"));
