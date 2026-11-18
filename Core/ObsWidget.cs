@@ -128,11 +128,14 @@ html,body{margin:0;background:transparent;overflow:hidden;font-family:"Segoe UI 
 .top .wrap{bottom:auto;top:8rem}
 .card{position:relative;height:52rem;width:fit-content;max-width:250rem;min-width:150rem;display:flex;align-items:center;gap:9rem;padding:0 13rem 0 8rem;box-sizing:border-box;
   border-radius:13rem;background:#0A0A0A;border:1rem solid #1E1E1E;
-  box-shadow:0 6rem 18rem rgba(0,0,0,.4);overflow:hidden;transition:opacity .4s ease,transform .5s cubic-bezier(.2,.9,.3,1.15)}
+  box-shadow:0 6rem 18rem rgba(0,0,0,.4);overflow:hidden;transition:opacity .4s ease,transform .5s cubic-bezier(.2,.9,.3,1.15),width .55s cubic-bezier(.3,.8,.25,1)}
 .card.hidden{opacity:0;transform:translateY(8rem) scale(.97)}
-.cover{width:36rem;height:36rem;border-radius:8rem;background:#1a1a1a center/cover no-repeat;flex:none;border:1rem solid rgba(255,255,255,.08)}
-.text{min-width:0;transition:opacity .22s,transform .22s}
-.text.swap{opacity:0;transform:translateX(-5rem)}
+.cover{position:relative;width:36rem;height:36rem;border-radius:8rem;background:#1a1a1a;flex:none;border:1rem solid rgba(255,255,255,.08);overflow:hidden}
+.cv{position:absolute;inset:0;background:center/cover no-repeat;opacity:0;transition:opacity .55s ease}
+.cv.on{opacity:1}
+.text{min-width:0;transition:opacity .28s ease,transform .35s cubic-bezier(.3,.8,.25,1)}
+.text.swap{opacity:0;transform:translateX(-6rem)}
+.fill.reset{transition:transform .5s ease}
 .row{display:flex;align-items:center;gap:6rem;min-width:0}
 .title{font-family:"Segoe UI Variable Display","Segoe UI",system-ui;font-size:13.5rem;font-weight:600;color:#F2F2F2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .artist{font-size:11.5rem;color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1rem}
@@ -146,7 +149,7 @@ html,body{margin:0;background:transparent;overflow:hidden;font-family:"Segoe UI 
 @keyframes eq{0%,100%{height:25%}50%{height:100%}}
 </style></head>
 <body><div class="wrap" id="wrap"><div class="card hidden" id="card">
-  <div class="cover" id="cover"></div>
+  <div class="cover"><div class="cv on" id="cvA"></div><div class="cv" id="cvB"></div></div>
   <div class="text" id="text">
     <div class="row"><span class="eq"><i></i><i></i><i></i></span><div class="title" id="title"></div></div>
     <div class="artist" id="artist"></div>
@@ -161,10 +164,22 @@ const scale=parseFloat(q.get('scale')||'1');
 const posq=q.get('pos')||'';if(posq.includes('left'))document.body.classList.add('left');if(posq.includes('top'))document.body.classList.add('top');
 if(q.get('static')==='1')document.body.classList.add('static');
 const $=id=>document.getElementById(id);
-// масштаб от высоты источника (база 72) — картинка всегда в родном разрешении, без растягивания
-const fit=()=>document.documentElement.style.fontSize=(innerHeight/72*scale)+'px';
-fit();addEventListener('resize',fit);
 let key='',pos=0,dur=0,playing=false,at=performance.now();
+// масштаб от высоты источника (база 72) — картинка всегда в родном разрешении, без растягивания
+const fit=()=>{document.documentElement.style.fontSize=(innerHeight/72*scale)+'px';if(key)$('card').style.width=natural()+'px';};
+// ширина по содержимому, но анимируемая: меряем «как было бы» и ставим явное значение — CSS плавно доезжает
+function natural(){const c=$('card'),was=c.style.width,tr=c.style.transition;c.style.transition='none';c.style.width='fit-content';
+  const w=c.getBoundingClientRect().width;c.style.width=was;c.offsetWidth;c.style.transition=tr;return w;}
+let front='cvA';
+function setCover(url,instant){
+  const back=front==='cvA'?'cvB':'cvA',el=$(back);
+  const show=()=>{el.style.backgroundImage=url?`url("${url.replace(/"/g,'%22')}")`:'none';
+    if(instant){$(front).classList.remove('on');el.classList.add('on');}else{el.classList.add('on');$(front).classList.remove('on');}front=back;};
+  if(!url){show();return;}
+  // новую обложку показываем, когда загрузилась — без мигания пустым квадратом
+  const img=new Image();let done=false;const go=()=>{if(!done){done=true;show();}};img.onload=go;img.onerror=go;img.src=url;setTimeout(go,1500);
+}
+addEventListener('resize',fit);fit();
 const ok=c=>c&&/^#[0-9a-fA-F]{6}$/.test(c);
 async function tick(){
   try{
@@ -180,9 +195,11 @@ async function tick(){
     if(has&&k!==key){
       const first=key==='';key=k;
       const apply=()=>{$('title').textContent=s.title;$('artist').textContent=s.artist||'';
-        $('cover').style.backgroundImage=s.cover?`url("${s.cover.replace(/"/g,'%22')}")`:'none';
+        $('card').style.width=natural()+'px';   // ширина плавно перетекает к новой
         $('text').classList.remove('swap');};
-      if(first)apply();else{$('text').classList.add('swap');setTimeout(apply,220);}
+      setCover(s.cover,first);
+      if(first)apply();
+      else{$('text').classList.add('swap');$('fill').classList.add('reset');setTimeout(()=>$('fill').classList.remove('reset'),600);setTimeout(apply,260);}
     }
     pos=s.pos||0;dur=s.dur||0;playing=!!s.playing;at=performance.now();
   }catch(e){$('card').classList.add('hidden');}

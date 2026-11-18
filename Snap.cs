@@ -121,7 +121,10 @@ public static class Snap
                     var now = await http.GetStringAsync(ObsWidget.Url + "now");
                     L($"виджет OBS: {(ObsWidget.Running ? "работает" : "ошибка " + ObsWidget.Error)}, /now = {now}");
                     File.WriteAllText(Path.Combine(dir, "widget_ready"), "1");
-                    await Task.Delay(15000); // снимок снаружи (Chrome headless)
+                    await Task.Delay(5000);
+                    pb.Next(); // смена трека — проверка анимации виджета
+                    L($"виджет: переключил на «{pb.Current?.FullTitle}»");
+                    await Task.Delay(12000); // снимок снаружи (Chrome headless)
                     ObsWidget.Stop();
                 }
                 // ползунок: нажали — перетаскивание должно длиться до отпускания
