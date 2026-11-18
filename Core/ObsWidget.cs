@@ -118,24 +118,26 @@ public static class ObsWidget
 <!doctype html>
 <html lang="ru"><head><meta charset="utf-8"><title>Noir · сейчас играет</title>
 <style>
-:root{--bg:#0A0A0A;--accent:#F2F2F2;--dim:#8C8C8C}
+/* 1rem = 1 «базовый» пиксель при высоте источника 72; скрипт подгоняет под реальную высоту —
+   поэтому чётко при любом размере: делайте источник в OBS крупным и уменьшайте на сцене */
+:root{--accent:#F2F2F2;--dim:#8C8C8C;font-size:1px}
 html,body{margin:0;background:transparent;overflow:hidden;font-family:"Segoe UI Variable Text","Segoe UI",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
-.wrap{position:absolute;left:8px;top:8px;transform-origin:0 0}
-.right .wrap{left:auto;right:8px;transform-origin:100% 0}
-.card{position:relative;width:300px;height:56px;display:flex;align-items:center;gap:10px;padding:0 14px 0 8px;box-sizing:border-box;
-  border-radius:14px;background:rgba(10,10,10,.86);border:1px solid rgba(255,255,255,.08);
-  box-shadow:0 8px 22px rgba(0,0,0,.4);overflow:hidden;transition:opacity .4s ease,transform .5s cubic-bezier(.2,.9,.3,1.15)}
-.card.hidden{opacity:0;transform:translateY(8px) scale(.97)}
-.cover{width:40px;height:40px;border-radius:8px;background:#1a1a1a center/cover no-repeat;flex:none;border:1px solid rgba(255,255,255,.08)}
-.text{flex:1;min-width:0;transition:opacity .22s,transform .22s}
-.text.swap{opacity:0;transform:translateX(-5px)}
-.row{display:flex;align-items:center;gap:7px;min-width:0}
-.title{font-family:"Segoe UI Variable Display","Segoe UI",system-ui;font-size:14px;font-weight:600;color:#F2F2F2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.artist{font-size:12px;color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
-.bar{position:absolute;left:0;right:0;bottom:0;height:2px;background:rgba(255,255,255,.08)}
+.wrap{position:absolute;left:8rem;top:8rem}
+.right .wrap{left:auto;right:8rem}
+.card{position:relative;height:52rem;width:fit-content;max-width:250rem;min-width:150rem;display:flex;align-items:center;gap:9rem;padding:0 13rem 0 8rem;box-sizing:border-box;
+  border-radius:13rem;background:rgba(10,10,10,.88);border:1rem solid rgba(255,255,255,.08);
+  box-shadow:0 6rem 18rem rgba(0,0,0,.4);overflow:hidden;transition:opacity .4s ease,transform .5s cubic-bezier(.2,.9,.3,1.15)}
+.card.hidden{opacity:0;transform:translateY(8rem) scale(.97)}
+.cover{width:36rem;height:36rem;border-radius:8rem;background:#1a1a1a center/cover no-repeat;flex:none;border:1rem solid rgba(255,255,255,.08)}
+.text{min-width:0;transition:opacity .22s,transform .22s}
+.text.swap{opacity:0;transform:translateX(-5rem)}
+.row{display:flex;align-items:center;gap:6rem;min-width:0}
+.title{font-family:"Segoe UI Variable Display","Segoe UI",system-ui;font-size:13.5rem;font-weight:600;color:#F2F2F2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.artist{font-size:11.5rem;color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1rem}
+.bar{position:absolute;left:0;right:0;bottom:0;height:2rem;background:rgba(255,255,255,.08)}
 .fill{height:100%;width:100%;transform:scaleX(0);transform-origin:0 50%;will-change:transform;background:var(--accent)}
-.eq{display:inline-flex;gap:2px;align-items:flex-end;height:9px;flex:none}
-.eq i{display:block;width:2px;height:40%;background:var(--accent);border-radius:1px;animation:eq .9s ease-in-out infinite}
+.eq{display:inline-flex;gap:2rem;align-items:flex-end;height:9rem;flex:none}
+.eq i{display:block;width:2rem;height:40%;background:var(--accent);border-radius:1rem;animation:eq .9s ease-in-out infinite}
 .eq i:nth-child(2){animation-delay:-.35s;animation-duration:.8s}.eq i:nth-child(3){animation-delay:-.6s;animation-duration:1.05s}
 .paused .eq i{animation-play-state:paused;height:30%}
 .static *{transition:none!important;animation:none!important}
@@ -157,7 +159,9 @@ const scale=parseFloat(q.get('scale')||'1');
 if(q.get('pos')==='right')document.body.classList.add('right');
 if(q.get('static')==='1')document.body.classList.add('static');
 const $=id=>document.getElementById(id);
-$('wrap').style.transform=`scale(${scale})`;
+// масштаб от высоты источника (база 72) — картинка всегда в родном разрешении, без растягивания
+const fit=()=>document.documentElement.style.fontSize=(innerHeight/72*scale)+'px';
+fit();addEventListener('resize',fit);
 let key='',pos=0,dur=0,playing=false,at=performance.now();
 const ok=c=>c&&/^#[0-9a-fA-F]{6}$/.test(c);
 async function tick(){

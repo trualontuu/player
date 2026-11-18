@@ -36,7 +36,7 @@ public partial class MainWindow
             playing = _pb.IsPlaying,
             title = t?.FullTitle ?? "",
             artist = t?.Artists ?? "",
-            cover = t?.CoverUrl(200) ?? "",
+            cover = t?.CoverUrl(400) ?? "",
             pos = _pb.Position.TotalSeconds,
             dur = _pb.Duration.TotalSeconds,
             accent = Player.Core.NoirTheme.Hex("Accent"),

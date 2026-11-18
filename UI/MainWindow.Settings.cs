@@ -93,7 +93,7 @@ public partial class MainWindow
         // виджет для OBS
         var obsStatus = new TextBlock { FontSize = 12.5, Foreground = (Brush)FindResource("Dim"), TextWrapping = TextWrapping.Wrap };
         void PaintObs() => obsStatus.Text = !_s.ObsWidget ? "Выключен"
-            : ObsWidget.Running ? $"Адрес: {ObsWidget.Url} — в OBS: Источники → + → Браузер, вставить адрес, ширина 320, высота 72"
+            : ObsWidget.Running ? $"Адрес: {ObsWidget.Url} — в OBS: Источники → + → Браузер, вставить адрес, ширина 1040, высота 288, затем уменьшить на сцене до нужного размера (так текст чёткий)"
             : "Не запустился: " + ObsWidget.Error;
         PaintObs();
         body.Children.Add(Group("Виджет для OBS",
