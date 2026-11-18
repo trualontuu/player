@@ -1,0 +1,462 @@
+<Window x:Class="Player.UI.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ui="clr-namespace:Player.UI"
+        Title="Player" Width="1080" Height="700" MinWidth="860" MinHeight="580"
+        Background="{StaticResource Bg}" Foreground="{StaticResource Fg}"
+        FontFamily="Segoe UI Variable Text, Segoe UI" FontSize="13.5"
+        UseLayoutRounding="True" SnapsToDevicePixels="True" TextOptions.TextFormattingMode="Ideal">
+  <WindowChrome.WindowChrome>
+    <WindowChrome CaptionHeight="44" ResizeBorderThickness="6" GlassFrameThickness="0" CornerRadius="0" UseAeroCaptionButtons="False"/>
+  </WindowChrome.WindowChrome>
+
+  <Window.Resources>
+    <DataTemplate x:Key="TrackRow">
+      <Grid x:Name="G">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="38"/>
+          <ColumnDefinition Width="44"/>
+          <ColumnDefinition Width="*"/>
+          <ColumnDefinition Width="0.6*" MaxWidth="260"/>
+          <ColumnDefinition Width="40"/>
+          <ColumnDefinition Width="54"/>
+        </Grid.ColumnDefinitions>
+        <TextBlock x:Name="Num" Foreground="{StaticResource Faint}" FontSize="12.5" VerticalAlignment="Center" HorizontalAlignment="Center"
+                   Text="{Binding (ItemsControl.AlternationIndex), RelativeSource={RelativeSource AncestorType=ListBoxItem}, Converter={x:Static ui:PlusOne.It}}"/>
+        <ui:EqBars x:Name="Eq" Visibility="Collapsed" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        <Button x:Name="RowPlay" Style="{StaticResource IconBtn}" Width="30" Height="30" FontSize="12" Content="&#xE768;" Foreground="{StaticResource Fg}" Visibility="Collapsed" Tag="{Binding}" Click="RowPlay_Click"/>
+        <Border Grid.Column="1" Width="40" Height="40" CornerRadius="6" Background="#14FFFFFF">
+          <Border.Clip><RectangleGeometry Rect="0,0,40,40" RadiusX="6" RadiusY="6"/></Border.Clip>
+          <Image Source="{Binding Cover}" Stretch="UniformToFill" RenderOptions.BitmapScalingMode="HighQuality"/>
+        </Border>
+        <StackPanel Grid.Column="2" VerticalAlignment="Center" Margin="14,0,12,0">
+          <TextBlock x:Name="T" Text="{Binding FullTitle}" FontSize="14" TextTrimming="CharacterEllipsis"/>
+          <Button Style="{StaticResource Link}" Tag="{Binding}" Click="RowArtist_Click" Margin="0,2,0,0" HorizontalAlignment="Left">
+              <TextBlock Text="{Binding Artists}" FontSize="12.5" TextTrimming="CharacterEllipsis"/>
+            </Button>
+        </StackPanel>
+        <Button Grid.Column="3" Style="{StaticResource Link}" Tag="{Binding}" Click="RowAlbum_Click" VerticalAlignment="Center" Margin="0,0,12,0">
+            <TextBlock Text="{Binding Album}" FontSize="12.5" TextTrimming="CharacterEllipsis"/>
+          </Button>
+        <Button x:Name="Heart" Grid.Column="4" Style="{StaticResource IconBtn}" Width="32" Height="32" FontSize="14" Content="&#xEB51;" Opacity="0" Tag="{Binding}" Click="Heart_Click"/>
+        <TextBlock Grid.Column="5" Text="{Binding Duration}" Foreground="{StaticResource Dim}" FontSize="12.5" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,8,0"/>
+      </Grid>
+      <DataTemplate.Triggers>
+        <DataTrigger Binding="{Binding Liked}" Value="True">
+          <Setter TargetName="Heart" Property="Content" Value="&#xEB52;"/>
+          <Setter TargetName="Heart" Property="Opacity" Value="1"/>
+          <Setter TargetName="Heart" Property="Foreground" Value="{StaticResource Fg}"/>
+        </DataTrigger>
+        <DataTrigger Binding="{Binding IsPlaying}" Value="True">
+          <Setter TargetName="Num" Property="Visibility" Value="Collapsed"/>
+          <Setter TargetName="Eq" Property="Visibility" Value="Visible"/>
+          <Setter TargetName="T" Property="FontWeight" Value="SemiBold"/>
+        </DataTrigger>
+        <DataTrigger Binding="{Binding IsMouseOver, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" Value="True">
+          <Setter TargetName="Heart" Property="Opacity" Value="1"/>
+          <Setter TargetName="Num" Property="Visibility" Value="Collapsed"/>
+          <Setter TargetName="Eq" Property="Visibility" Value="Collapsed"/>
+          <Setter TargetName="RowPlay" Property="Visibility" Value="Visible"/>
+        </DataTrigger>
+        <DataTrigger Binding="{Binding IsSc}" Value="True">
+          <Setter TargetName="Heart" Property="Visibility" Value="Collapsed"/>
+        </DataTrigger>
+        <DataTrigger Binding="{Binding Available}" Value="False">
+          <Setter TargetName="G" Property="Opacity" Value="0.35"/>
+        </DataTrigger>
+      </DataTemplate.Triggers>
+    </DataTemplate>
+
+    <!-- плитка альбома / артиста / плейлиста -->
+    <DataTemplate x:Key="CardTpl">
+      <Button Style="{StaticResource CardBtn}" Tag="{Binding}" Click="Card_Click" Width="172">
+        <StackPanel>
+          <Grid Width="152" Height="152">
+            <Border x:Name="Sq" CornerRadius="10" Background="#18FFFFFF">
+              <Border.Effect><DropShadowEffect BlurRadius="18" ShadowDepth="6" Direction="270" Opacity="0.5" Color="Black"/></Border.Effect>
+            </Border>
+            <Image x:Name="Img" Source="{Binding Cover}" Stretch="UniformToFill" RenderOptions.BitmapScalingMode="HighQuality">
+              <Image.Clip><RectangleGeometry x:Name="Clip" Rect="0,0,152,152" RadiusX="10" RadiusY="10"/></Image.Clip>
+            </Image>
+          </Grid>
+          <TextBlock x:Name="T" Text="{Binding Title}" FontSize="13.5" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" Margin="0,10,0,0"/>
+          <TextBlock x:Name="S" Text="{Binding Subtitle}" FontSize="12" Foreground="{StaticResource Dim}" TextTrimming="CharacterEllipsis" Margin="0,2,0,0"/>
+        </StackPanel>
+      </Button>
+      <DataTemplate.Triggers>
+        <DataTrigger Binding="{Binding Round}" Value="True">
+          <Setter TargetName="Sq" Property="CornerRadius" Value="76"/>
+          <Setter TargetName="Img" Property="Clip"><Setter.Value><EllipseGeometry Center="76,76" RadiusX="76" RadiusY="76"/></Setter.Value></Setter>
+          <Setter TargetName="T" Property="HorizontalAlignment" Value="Center"/>
+          <Setter TargetName="S" Property="HorizontalAlignment" Value="Center"/>
+        </DataTrigger>
+      </DataTemplate.Triggers>
+    </DataTemplate>
+
+    <!-- строка в очереди -->
+    <DataTemplate x:Key="QueueRow">
+      <Grid x:Name="G">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="44"/>
+          <ColumnDefinition Width="*"/>
+          <ColumnDefinition Width="36"/>
+        </Grid.ColumnDefinitions>
+        <Border Width="40" Height="40" CornerRadius="6" Background="#14FFFFFF">
+          <Border.Clip><RectangleGeometry Rect="0,0,40,40" RadiusX="6" RadiusY="6"/></Border.Clip>
+          <Image Source="{Binding T.Cover}" Stretch="UniformToFill" RenderOptions.BitmapScalingMode="HighQuality"/>
+        </Border>
+        <ui:EqBars x:Name="Eq" Visibility="Collapsed" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="12,0,6,0">
+          <TextBlock x:Name="Title" Text="{Binding T.FullTitle}" FontSize="13.5" TextTrimming="CharacterEllipsis"/>
+          <TextBlock Text="{Binding T.Artists}" Foreground="{StaticResource Dim}" FontSize="12" TextTrimming="CharacterEllipsis" Margin="0,2,0,0"/>
+        </StackPanel>
+        <TextBlock x:Name="Dur" Grid.Column="2" Text="{Binding T.Duration}" Foreground="{StaticResource Dim}" FontSize="12" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+        <Button x:Name="Rm" Grid.Column="2" Style="{StaticResource IconBtn}" Width="30" Height="30" FontSize="10" Content="&#xE711;" Visibility="Collapsed" Tag="{Binding}" Click="QueueRemove_Click" ToolTip="Убрать из очереди"/>
+      </Grid>
+      <DataTemplate.Triggers>
+        <DataTrigger Binding="{Binding IsNow}" Value="True">
+          <Setter TargetName="Title" Property="FontWeight" Value="SemiBold"/>
+        </DataTrigger>
+        <MultiDataTrigger>
+          <MultiDataTrigger.Conditions>
+            <Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" Value="True"/>
+            <Condition Binding="{Binding IsNow}" Value="False"/>
+          </MultiDataTrigger.Conditions>
+          <Setter TargetName="Rm" Property="Visibility" Value="Visible"/>
+          <Setter TargetName="Dur" Property="Visibility" Value="Collapsed"/>
+        </MultiDataTrigger>
+        <DataTrigger Binding="{Binding Manual}" Value="True">
+          <Setter TargetName="Title" Property="Foreground" Value="{StaticResource Fg}"/>
+        </DataTrigger>
+      </DataTemplate.Triggers>
+    </DataTemplate>
+  </Window.Resources>
+
+  <Grid x:Name="Root" ClipToBounds="True">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="*"/>
+      <RowDefinition Height="Auto"/>
+    </Grid.RowDefinitions>
+
+    <!-- ===================== фон: размытая обесцвеченная обложка ===================== -->
+    <Grid Grid.RowSpan="2" IsHitTestVisible="False">
+      <Image x:Name="BackA" Stretch="UniformToFill" Opacity="0" Margin="-140" RenderOptions.BitmapScalingMode="HighQuality">
+        <Image.Effect><BlurEffect Radius="40" KernelType="Gaussian" RenderingBias="Performance"/></Image.Effect>
+        <Image.CacheMode><BitmapCache RenderAtScale="0.25"/></Image.CacheMode>
+      </Image>
+      <Image x:Name="BackB" Stretch="UniformToFill" Opacity="0" Margin="-140" RenderOptions.BitmapScalingMode="HighQuality">
+        <Image.Effect><BlurEffect Radius="40" KernelType="Gaussian" RenderingBias="Performance"/></Image.Effect>
+        <Image.CacheMode><BitmapCache RenderAtScale="0.25"/></Image.CacheMode>
+      </Image>
+      <!-- затемнение: сверху обложка просвечивает, книзу уходит в чёрный -->
+      <Rectangle>
+        <Rectangle.Fill>
+          <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+            <GradientStop Color="#B80A0A0A" Offset="0"/>
+            <GradientStop Color="#DA0A0A0A" Offset="0.55"/>
+            <GradientStop Color="#F80A0A0A" Offset="1"/>
+          </LinearGradientBrush>
+        </Rectangle.Fill>
+      </Rectangle>
+    </Grid>
+
+    <!-- ===================== верх: меню + страница ===================== -->
+    <Grid>
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="236"/>
+        <ColumnDefinition Width="*"/>
+      </Grid.ColumnDefinitions>
+
+      <!-- боковое меню -->
+      <Border Background="#B80A0A0A" BorderBrush="#14FFFFFF" BorderThickness="0,0,1,0">
+        <DockPanel Margin="12,0,12,14">
+          <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Height="62" Margin="12,0,0,6">
+            <Grid Width="26" Height="26" VerticalAlignment="Center">
+              <Ellipse Stroke="{StaticResource Fg}" StrokeThickness="2"/>
+              <Ellipse Width="8" Height="8" Fill="{StaticResource Fg}"/>
+            </Grid>
+            <TextBlock Text="player" FontFamily="Segoe UI Variable Display, Segoe UI" FontSize="19" FontWeight="SemiBold" Margin="10,0,0,3" VerticalAlignment="Center"/>
+          </StackPanel>
+
+          <StackPanel DockPanel.Dock="Top">
+            <RadioButton x:Name="NavWave" Style="{StaticResource NavBtn}" GroupName="nav" Height="40">
+              <StackPanel Orientation="Horizontal"><TextBlock Text="&#xE8D6;" FontFamily="{StaticResource Icons}" Width="30" VerticalAlignment="Center"/><TextBlock Text="Моя волна"/></StackPanel>
+            </RadioButton>
+            <RadioButton x:Name="NavLikes" Style="{StaticResource NavBtn}" GroupName="nav" Height="40">
+              <StackPanel Orientation="Horizontal"><TextBlock Text="&#xEB51;" FontFamily="{StaticResource Icons}" Width="30" VerticalAlignment="Center"/><TextBlock Text="Мне нравится"/></StackPanel>
+            </RadioButton>
+            <RadioButton x:Name="NavSearch" Style="{StaticResource NavBtn}" GroupName="nav" Height="40">
+              <StackPanel Orientation="Horizontal"><TextBlock Text="&#xE721;" FontFamily="{StaticResource Icons}" Width="30" VerticalAlignment="Center"/><TextBlock Text="Поиск"/></StackPanel>
+            </RadioButton>
+          </StackPanel>
+
+          <!-- аккаунт -->
+          <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" Margin="12,12,0,0">
+            <Border Width="30" Height="30" CornerRadius="15" Background="#1FFFFFFF" BorderBrush="#2AFFFFFF" BorderThickness="1">
+              <TextBlock x:Name="AccountLetter" FontSize="12.5" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            </Border>
+            <TextBlock x:Name="Account" Foreground="{StaticResource Dim}" FontSize="12.5" Margin="10,0,0,1" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" MaxWidth="150"/>
+          </StackPanel>
+
+          <DockPanel Margin="0,24,0,0">
+            <TextBlock DockPanel.Dock="Top" Text="ПЛЕЙЛИСТЫ" FontSize="10.5" FontWeight="SemiBold" Foreground="{StaticResource Faint}" Margin="12,0,0,8"/>
+            <ScrollViewer VerticalScrollBarVisibility="Auto" Focusable="False">
+              <StackPanel x:Name="PlaylistNav"/>
+            </ScrollViewer>
+          </DockPanel>
+        </DockPanel>
+      </Border>
+
+      <!-- страницы -->
+      <Grid Grid.Column="1">
+        <!-- ============ Моя волна: экран «сейчас играет» ============ -->
+        <Grid x:Name="WavePage">
+          <Grid.RenderTransform><TranslateTransform/></Grid.RenderTransform>
+          <ui:WaveVisual x:Name="WaveArt" Height="80" VerticalAlignment="Bottom" Margin="0,0,0,2" Opacity="0.7"/>
+          <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,10,0,30">
+            <!-- обложка -->
+            <Grid Width="220" Height="220" HorizontalAlignment="Center">
+              <Border CornerRadius="18" Background="#141414">
+                <Border.Effect><DropShadowEffect BlurRadius="48" ShadowDepth="16" Direction="270" Opacity="0.75" Color="Black"/></Border.Effect>
+              </Border>
+              <Border CornerRadius="18" BorderBrush="#1AFFFFFF" BorderThickness="1" Panel.ZIndex="2"/>
+              <Grid>
+                <Grid.Clip><RectangleGeometry Rect="0,0,220,220" RadiusX="18" RadiusY="18"/></Grid.Clip>
+                <Grid x:Name="HeroEmpty">
+                  <Grid.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                      <GradientStop Color="#262626" Offset="0"/>
+                      <GradientStop Color="#0E0E0E" Offset="1"/>
+                    </LinearGradientBrush>
+                  </Grid.Background>
+                  <Ellipse Width="92" Height="92" Stroke="#50FFFFFF" StrokeThickness="2"/>
+                  <Ellipse Width="24" Height="24" Fill="#50FFFFFF"/>
+                </Grid>
+                <Image x:Name="HeroCover" Stretch="UniformToFill" RenderOptions.BitmapScalingMode="HighQuality"/>
+              </Grid>
+            </Grid>
+
+            <TextBlock x:Name="HeroLabel" Text="МОЯ ВОЛНА" FontSize="11" FontWeight="SemiBold" Foreground="{StaticResource Dim}" HorizontalAlignment="Center" Margin="0,28,0,0"/>
+            <TextBlock x:Name="HeroTitle" Text="Бесконечный поток под ваш вкус" FontFamily="Segoe UI Variable Display, Segoe UI" FontSize="28" FontWeight="SemiBold"
+                       HorizontalAlignment="Center" TextTrimming="CharacterEllipsis" MaxWidth="560" Margin="0,6,0,0"/>
+            <Button x:Name="HeroArtistBtn" Style="{StaticResource Link}" HorizontalAlignment="Center" Margin="0,3,0,0">
+              <TextBlock x:Name="HeroArtist" Text="Нажмите, чтобы начать" FontSize="14.5" TextTrimming="CharacterEllipsis" MaxWidth="520"/>
+            </Button>
+
+            <Grid HorizontalAlignment="Center" Margin="0,18,0,0">
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="60"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="60"/>
+              </Grid.ColumnDefinitions>
+              <Button x:Name="HeroDislike" Style="{StaticResource IconBtn}" Content="&#xE8E0;" Width="42" Height="42" FontSize="15" ToolTip="Не нравится — больше не ставить" HorizontalAlignment="Left"/>
+              <Button x:Name="WavePlay" Grid.Column="1" Style="{StaticResource PlayBtn}" Width="62" Height="62" FontSize="21" Content="&#xE768;" Margin="10,0"/>
+              <Button x:Name="HeroNext" Grid.Column="2" Style="{StaticResource IconBtn}" Content="&#xE893;" Width="42" Height="42" FontSize="15" ToolTip="Следующий" HorizontalAlignment="Right"/>
+            </Grid>
+
+            <WrapPanel x:Name="WaveScene" HorizontalAlignment="Center" Margin="0,20,0,0"/>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,2,0,0">
+              <Button x:Name="AutoCs2" Style="{StaticResource Pill}" BorderBrush="Transparent" Background="Transparent" Padding="10,4" FontSize="12"/>
+              <Button x:Name="TuneToggle" Style="{StaticResource Pill}" BorderBrush="Transparent" Background="Transparent" Padding="10,4" FontSize="12" Foreground="{StaticResource Dim}" Content="Настроить ▾"/>
+            </StackPanel>
+            <StackPanel x:Name="TunePanel" Visibility="Collapsed">
+              <WrapPanel x:Name="WaveDiv" HorizontalAlignment="Center" Margin="0,4,0,0"/>
+              <WrapPanel x:Name="WaveMood" HorizontalAlignment="Center"/>
+            </StackPanel>
+          </StackPanel>
+        </Grid>
+
+        <!-- ============ список треков ============ -->
+        <DockPanel x:Name="ListPage" Visibility="Collapsed" Margin="32,0,18,0">
+          <DockPanel.RenderTransform><TranslateTransform/></DockPanel.RenderTransform>
+          <StackPanel DockPanel.Dock="Top" Margin="0,50,0,0">
+
+            <DockPanel x:Name="ListHeader">
+              <!-- обложка списка -->
+              <Grid DockPanel.Dock="Left" Width="140" Height="140" Margin="0,0,26,0">
+                <Border CornerRadius="14" Background="#141414">
+                  <Border.Effect><DropShadowEffect BlurRadius="34" ShadowDepth="12" Direction="270" Opacity="0.65" Color="Black"/></Border.Effect>
+                </Border>
+                <Grid>
+                  <Grid.Clip><RectangleGeometry Rect="0,0,140,140" RadiusX="14" RadiusY="14"/></Grid.Clip>
+                  <Grid x:Name="ListArtTile">
+                    <Grid.Background>
+                      <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="#F2F2F2" Offset="0"/>
+                        <GradientStop Color="#9A9A9A" Offset="1"/>
+                      </LinearGradientBrush>
+                    </Grid.Background>
+                    <TextBlock x:Name="ListArtGlyph" Text="&#xEB52;" FontFamily="{StaticResource Icons}" FontSize="50" Foreground="#0A0A0A" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                  </Grid>
+                  <Image x:Name="ListArtImage" Stretch="UniformToFill" RenderOptions.BitmapScalingMode="HighQuality"/>
+                </Grid>
+              </Grid>
+              <StackPanel VerticalAlignment="Bottom">
+                <TextBlock x:Name="ListKind" Text="ПЛЕЙЛИСТ" FontSize="11" FontWeight="SemiBold" Foreground="{StaticResource Dim}"/>
+                <TextBlock x:Name="ListTitle" FontFamily="Segoe UI Variable Display, Segoe UI" FontSize="38" FontWeight="Bold" TextTrimming="CharacterEllipsis" Margin="0,0,0,0"/>
+                <Button x:Name="ListSub" Style="{StaticResource Link}" Visibility="Collapsed" FontSize="14" Margin="0,0,0,2"/>
+                <StackPanel Orientation="Horizontal" Margin="0,10,0,2">
+                  <Button x:Name="ListPlay" Style="{StaticResource PlayBtn}" Width="44" Height="44" FontSize="16" Content="&#xE768;" Margin="0,0,12,0"/>
+                  <Button x:Name="ListShuffle" Style="{StaticResource Pill}" Margin="0,0,16,0">
+                    <StackPanel Orientation="Horizontal"><TextBlock Text="&#xE8B1;" FontFamily="{StaticResource Icons}" Margin="0,1,8,0"/><TextBlock Text="Перемешать"/></StackPanel>
+                  </Button>
+                  <TextBlock x:Name="ListInfo" Foreground="{StaticResource Dim}" VerticalAlignment="Center"/>
+                </StackPanel>
+              </StackPanel>
+            </DockPanel>
+
+            <!-- заголовки колонок -->
+            <Grid Margin="10,24,26,0" TextElement.Foreground="{StaticResource Faint}" TextElement.FontSize="10.5">
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="38"/>
+                <ColumnDefinition Width="44"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="0.6*" MaxWidth="260"/>
+                <ColumnDefinition Width="40"/>
+                <ColumnDefinition Width="54"/>
+              </Grid.ColumnDefinitions>
+              <TextBlock Text="#" HorizontalAlignment="Center"/>
+              <TextBlock Grid.Column="2" Text="НАЗВАНИЕ" Margin="14,0,0,0"/>
+              <TextBlock Grid.Column="3" Text="АЛЬБОМ"/>
+              <TextBlock Grid.Column="5" Text="&#xE823;" FontFamily="{StaticResource Icons}" FontSize="12" HorizontalAlignment="Right" Margin="0,0,8,0"/>
+            </Grid>
+            <Border Height="1" Background="#14FFFFFF" Margin="0,8,16,4"/>
+          </StackPanel>
+
+          <Grid>
+            <ListBox x:Name="Tracks" Background="Transparent" BorderThickness="0" ItemContainerStyle="{StaticResource Row}"
+                     VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling"
+                     VirtualizingPanel.ScrollUnit="Pixel" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                     AlternationCount="100000" Focusable="False" ItemTemplate="{StaticResource TrackRow}"/>
+            <TextBlock x:Name="ListEmpty" Foreground="{StaticResource Dim}" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed"/>
+          </Grid>
+        </DockPanel>
+
+        <!-- ============ обзор: поиск по всему, страница артиста ============ -->
+        <ScrollViewer x:Name="BrowsePage" Visibility="Collapsed" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Focusable="False">
+          <ScrollViewer.RenderTransform><TranslateTransform/></ScrollViewer.RenderTransform>
+          <StackPanel Margin="32,50,18,24">
+                <StackPanel x:Name="SearchRow" Orientation="Horizontal" Margin="0,0,0,24">
+                <Border x:Name="SearchBox" Height="46" CornerRadius="23" Background="#14FFFFFF" BorderBrush="#1FFFFFFF" BorderThickness="1" Margin="0,0,14,0" HorizontalAlignment="Left" Width="440">
+                  <Grid Margin="18,0">
+                    <TextBlock Text="&#xE721;" FontFamily="{StaticResource Icons}" Foreground="{StaticResource Dim}" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="SearchHint" Text="Трек, исполнитель…" Foreground="{StaticResource Faint}" Margin="30,0,0,1" VerticalAlignment="Center" IsHitTestVisible="False" FontSize="15"/>
+                    <TextBox x:Name="SearchText" Margin="28,0,0,0" Background="Transparent" BorderThickness="0" Foreground="{StaticResource Fg}" CaretBrush="{StaticResource Fg}" SelectionBrush="#555" FontSize="15" VerticalAlignment="Center">
+                      <TextBox.Template>
+                        <ControlTemplate TargetType="TextBox"><ScrollViewer x:Name="PART_ContentHost" Focusable="False"/></ControlTemplate>
+                      </TextBox.Template>
+                    </TextBox>
+                  </Grid>
+                </Border>
+                  <Button x:Name="SrcYm" Style="{StaticResource Pill}" Content="Яндекс Музыка" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                  <Button x:Name="SrcSc" Style="{StaticResource Pill}" Content="SoundCloud" VerticalAlignment="Center"/>
+                </StackPanel>
+            <StackPanel x:Name="BrowseBody"/>
+            <TextBlock x:Name="BrowseEmpty" Foreground="{StaticResource Dim}" FontSize="14" HorizontalAlignment="Center" Margin="0,120,0,0" Visibility="Collapsed"/>
+          </StackPanel>
+        </ScrollViewer>
+
+        <!-- вход -->
+        <Grid x:Name="LoginPage" Visibility="Collapsed" Background="{StaticResource Bg}">
+          <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Width="380">
+            <TextBlock Text="Яндекс Музыка" FontSize="30" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+            <TextBlock x:Name="LoginText" Text="Войдите, чтобы слушать свою музыку. Пароль вводится на сайте Яндекса — сюда попадает только ключ доступа." TextWrapping="Wrap" TextAlignment="Center" Foreground="{StaticResource Dim}" Margin="0,10,0,22"/>
+            <TextBlock x:Name="LoginCode" FontSize="40" FontWeight="SemiBold" HorizontalAlignment="Center" Visibility="Collapsed" Margin="0,0,0,16" FontFamily="Consolas"/>
+            <Button x:Name="LoginBtn" Style="{StaticResource PillOn}" HorizontalAlignment="Center" Padding="26,9" Content="Войти через Яндекс"/>
+          </StackPanel>
+        </Grid>
+
+        <!-- очередь -->
+        <Border x:Name="QueuePanel" Visibility="Collapsed" HorizontalAlignment="Right" Width="360" Background="#F50E0E0E" BorderBrush="#1FFFFFFF" BorderThickness="1,0,0,0">
+          <Border.RenderTransform><TranslateTransform/></Border.RenderTransform>
+          <Border.Effect><DropShadowEffect BlurRadius="30" ShadowDepth="0" Opacity="0.6" Color="Black"/></Border.Effect>
+          <DockPanel Margin="0,40,0,0">
+            <DockPanel DockPanel.Dock="Top" Margin="22,6,14,14">
+              <Button x:Name="QueueClose" DockPanel.Dock="Right" Style="{StaticResource IconBtn}" FontSize="10" Content="&#xE8BB;" ToolTip="Закрыть"/>
+              <TextBlock Text="Очередь" FontFamily="Segoe UI Variable Display, Segoe UI" FontSize="22" FontWeight="SemiBold" VerticalAlignment="Center"/>
+            </DockPanel>
+            <TextBlock DockPanel.Dock="Top" Text="СЕЙЧАС ИГРАЕТ" FontSize="10.5" FontWeight="SemiBold" Foreground="{StaticResource Faint}" Margin="22,0,0,6"/>
+            <ListBox x:Name="QueueNow" DockPanel.Dock="Top" Background="Transparent" BorderThickness="0" ItemContainerStyle="{StaticResource Row}" ItemTemplate="{StaticResource QueueRow}" Margin="12,0,12,0" Focusable="False" ScrollViewer.VerticalScrollBarVisibility="Disabled"/>
+            <TextBlock x:Name="QueueFrom" DockPanel.Dock="Top" FontSize="10.5" FontWeight="SemiBold" Foreground="{StaticResource Faint}" Margin="22,18,14,6" TextTrimming="CharacterEllipsis"/>
+            <Grid>
+              <ListBox x:Name="QueueList" Background="Transparent" BorderThickness="0" ItemContainerStyle="{StaticResource Row}" ItemTemplate="{StaticResource QueueRow}"
+                       VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling" VirtualizingPanel.ScrollUnit="Pixel"
+                       ScrollViewer.HorizontalScrollBarVisibility="Disabled" Margin="12,0,6,12" Focusable="False" AllowDrop="True"/>
+              <TextBlock x:Name="QueueEmpty" Text="Дальше ничего нет" Foreground="{StaticResource Dim}" HorizontalAlignment="Center" Margin="0,40,0,0" Visibility="Collapsed"/>
+            </Grid>
+          </DockPanel>
+        </Border>
+
+        <!-- назад -->
+        <Button x:Name="BtnBack" Style="{StaticResource IconBtn}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="14,6,0,0" FontSize="13" Content="&#xE72B;" ToolTip="Назад (Alt+←)"
+                Visibility="Collapsed" WindowChrome.IsHitTestVisibleInChrome="True"/>
+
+        <!-- кнопки окна -->
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top" WindowChrome.IsHitTestVisibleInChrome="True">
+          <Button x:Name="BtnMin" Style="{StaticResource IconBtn}" FontSize="10" Width="46" Height="36" Content="&#xE921;"/>
+          <Button x:Name="BtnMax" Style="{StaticResource IconBtn}" FontSize="10" Width="46" Height="36" Content="&#xE922;"/>
+          <Button x:Name="BtnClose" Style="{StaticResource IconBtn}" FontSize="10" Width="46" Height="36" Content="&#xE8BB;"/>
+        </StackPanel>
+
+        <!-- всплывающее сообщение -->
+        <Border x:Name="Toast" Visibility="Collapsed" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="0,0,0,16" Background="{StaticResource Fg}" CornerRadius="18" Padding="16,8">
+          <TextBlock x:Name="ToastText" Foreground="#0A0A0A" FontSize="13"/>
+        </Border>
+      </Grid>
+    </Grid>
+
+    <!-- ===================== низ: сейчас играет ===================== -->
+    <Border Grid.Row="1" Height="88" Background="#E00A0A0A" BorderBrush="#14FFFFFF" BorderThickness="0,1,0,0">
+      <Grid Margin="18,0">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*" MinWidth="230"/>
+          <ColumnDefinition Width="2*" MaxWidth="640"/>
+          <ColumnDefinition Width="*" MinWidth="200"/>
+        </Grid.ColumnDefinitions>
+
+        <DockPanel VerticalAlignment="Center">
+          <Border DockPanel.Dock="Left" Width="56" Height="56" CornerRadius="8" Background="#14FFFFFF">
+            <Border.Clip><RectangleGeometry Rect="0,0,56,56" RadiusX="8" RadiusY="8"/></Border.Clip>
+            <Image x:Name="NowCover" Stretch="UniformToFill" RenderOptions.BitmapScalingMode="HighQuality"/>
+          </Border>
+          <Button x:Name="NowLike" DockPanel.Dock="Right" Style="{StaticResource IconBtn}" Content="&#xEB51;" FontSize="15" Margin="4,0,8,0"/>
+          <StackPanel VerticalAlignment="Center" Margin="14,0,4,0">
+            <Button x:Name="NowTitleBtn" Style="{StaticResource Link}" Foreground="{StaticResource Fg}" ToolTip="К альбому">
+              <TextBlock x:Name="NowTitle" FontSize="14" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/>
+            </Button>
+            <Button x:Name="NowArtistBtn" Style="{StaticResource Link}" Margin="0,3,0,0" ToolTip="К артисту">
+              <TextBlock x:Name="NowArtist" FontSize="12.5" TextTrimming="CharacterEllipsis"/>
+            </Button>
+          </StackPanel>
+        </DockPanel>
+
+        <StackPanel Grid.Column="1" VerticalAlignment="Center">
+          <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+            <Button x:Name="BtnShuffle" Style="{StaticResource IconBtn}" Content="&#xE8B1;" FontSize="14" ToolTip="Перемешать"/>
+            <Button x:Name="BtnPrev" Style="{StaticResource IconBtn}" Content="&#xE892;" Margin="10,0,8,0"/>
+            <Button x:Name="BtnPlay" Style="{StaticResource PlayBtn}" Width="42" Height="42" Content="&#xE768;"/>
+            <Button x:Name="BtnNext" Style="{StaticResource IconBtn}" Content="&#xE893;" Margin="8,0,10,0"/>
+            <Button x:Name="BtnRepeat" Style="{StaticResource IconBtn}" Content="&#xE8EE;" FontSize="14" ToolTip="Повтор"/>
+          </StackPanel>
+          <Grid Margin="0,6,0,0">
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="46"/>
+              <ColumnDefinition Width="*"/>
+              <ColumnDefinition Width="46"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock x:Name="PosText" Text="0:00" Foreground="{StaticResource Dim}" FontSize="11.5" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,0"/>
+            <Slider x:Name="Seek" Grid.Column="1" Style="{StaticResource Thin}" Minimum="0" Maximum="1" VerticalAlignment="Center"/>
+            <TextBlock x:Name="DurText" Grid.Column="2" Text="0:00" Foreground="{StaticResource Dim}" FontSize="11.5" VerticalAlignment="Center" Margin="10,0,0,0"/>
+          </Grid>
+        </StackPanel>
+
+        <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+          <Button x:Name="BtnDislike" Style="{StaticResource IconBtn}" Content="&#xE8E0;" FontSize="14" ToolTip="Не нравится — больше не ставить" Visibility="Collapsed"/>
+          <Button x:Name="BtnQueue" Style="{StaticResource IconBtn}" Content="&#xE8FD;" FontSize="15" ToolTip="Очередь (Ctrl+Q)" Margin="2,0,2,0"/>
+          <Button x:Name="BtnMute" Style="{StaticResource IconBtn}" Content="&#xE767;" FontSize="15" Margin="4,0,2,0"/>
+          <Slider x:Name="Vol" Style="{StaticResource Thin}" Width="110" Minimum="0" Maximum="1" VerticalAlignment="Center"/>
+        </StackPanel>
+      </Grid>
+    </Border>
+  </Grid>
+</Window>
