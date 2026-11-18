@@ -2,7 +2,7 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:ui="clr-namespace:Player.UI"
-        Title="Player" Width="1080" Height="700" MinWidth="860" MinHeight="580"
+        Title="Noir" Width="1080" Height="700" MinWidth="860" MinHeight="580"
         Background="{StaticResource Bg}" Foreground="{StaticResource Fg}"
         FontFamily="Segoe UI Variable Text, Segoe UI" FontSize="13.5"
         UseLayoutRounding="True" SnapsToDevicePixels="True" TextOptions.TextFormattingMode="Ideal">
@@ -171,11 +171,13 @@
       <Border Background="#B80A0A0A" BorderBrush="#14FFFFFF" BorderThickness="0,0,1,0">
         <DockPanel Margin="12,0,12,14">
           <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Height="62" Margin="12,0,0,6">
+            <!-- логотип: пластинка, наполовину в тени -->
             <Grid Width="26" Height="26" VerticalAlignment="Center">
               <Ellipse Stroke="{StaticResource Fg}" StrokeThickness="2"/>
-              <Ellipse Width="8" Height="8" Fill="{StaticResource Fg}"/>
+              <Path Fill="{StaticResource Fg}" Data="M13,2 A11,11 0 0 1 13,24 Z"/>
+              <Ellipse Width="7" Height="7" Fill="#0A0A0A" Stroke="{StaticResource Fg}" StrokeThickness="1.5"/>
             </Grid>
-            <TextBlock Text="player" FontFamily="Segoe UI Variable Display, Segoe UI" FontSize="19" FontWeight="SemiBold" Margin="10,0,0,3" VerticalAlignment="Center"/>
+            <TextBlock Text="noir" FontFamily="Segoe UI Variable Display, Segoe UI" FontSize="19" FontWeight="SemiBold" Margin="10,0,0,3" VerticalAlignment="Center"/>
           </StackPanel>
 
           <StackPanel DockPanel.Dock="Top">
@@ -212,10 +214,15 @@
         <!-- ============ Моя волна: экран «сейчас играет» ============ -->
         <Grid x:Name="WavePage">
           <Grid.RenderTransform><TranslateTransform/></Grid.RenderTransform>
-          <ui:WaveVisual x:Name="WaveArt" Height="80" VerticalAlignment="Bottom" Margin="0,0,0,2" Opacity="0.7"/>
-          <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,10,0,30">
-            <!-- обложка -->
-            <Grid Width="220" Height="220" HorizontalAlignment="Center">
+          <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="76"/>
+          </Grid.RowDefinitions>
+          <!-- волна — своя полоса внизу, на кнопки не наезжает -->
+          <ui:WaveVisual x:Name="WaveArt" Grid.Row="1" Height="72" VerticalAlignment="Bottom" Margin="0,0,0,2" Opacity="0.7"/>
+          <StackPanel x:Name="WaveContent" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,38,0,6">
+            <!-- обложка (масштаб подбирается под высоту окна — FitHero) -->
+            <Grid x:Name="HeroArt" Width="220" Height="220" HorizontalAlignment="Center">
               <Border CornerRadius="18" Background="#141414">
                 <Border.Effect><DropShadowEffect BlurRadius="48" ShadowDepth="16" Direction="270" Opacity="0.75" Color="Black"/></Border.Effect>
               </Border>
@@ -259,10 +266,23 @@
               <Button x:Name="AutoCs2" Style="{StaticResource Pill}" BorderBrush="Transparent" Background="Transparent" Padding="10,4" FontSize="12"/>
               <Button x:Name="TuneToggle" Style="{StaticResource Pill}" BorderBrush="Transparent" Background="Transparent" Padding="10,4" FontSize="12" Foreground="{StaticResource Dim}" Content="Настроить ▾"/>
             </StackPanel>
-            <StackPanel x:Name="TunePanel" Visibility="Collapsed">
-              <WrapPanel x:Name="WaveDiv" HorizontalAlignment="Center" Margin="0,4,0,0"/>
-              <WrapPanel x:Name="WaveMood" HorizontalAlignment="Center"/>
-            </StackPanel>
+            <Border x:Name="TunePanel" Visibility="Collapsed" HorizontalAlignment="Center" Margin="0,8,0,0" Padding="18,12,18,10"
+                    CornerRadius="16" Background="#10FFFFFF" BorderBrush="#16FFFFFF" BorderThickness="1">
+              <Grid>
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="Auto"/>
+                  <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                  <RowDefinition/>
+                  <RowDefinition/>
+                </Grid.RowDefinitions>
+                <TextBlock Text="ХАРАКТЕР" FontSize="10.5" FontWeight="SemiBold" Foreground="{StaticResource Faint}" VerticalAlignment="Center" Margin="0,0,14,0"/>
+                <WrapPanel x:Name="WaveDiv" Grid.Column="1"/>
+                <TextBlock Grid.Row="1" Text="НАСТРОЕНИЕ" FontSize="10.5" FontWeight="SemiBold" Foreground="{StaticResource Faint}" VerticalAlignment="Center" Margin="0,0,14,0"/>
+                <WrapPanel x:Name="WaveMood" Grid.Row="1" Grid.Column="1"/>
+              </Grid>
+            </Border>
           </StackPanel>
         </Grid>
 

@@ -42,6 +42,15 @@ public static class Snap
             L($"вход: {(Ym.LoggedIn ? "есть" : "нет")}");
             await Task.Delay(400);
             Save(win, Path.Combine(dir, "1_wave.png"));
+            win.TuneToggle.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Primitives.ButtonBase.ClickEvent));
+            await Task.Delay(500);
+            Save(win, Path.Combine(dir, "1b_tune.png"));
+            win.Width = 860; win.Height = 580;
+            await Task.Delay(500);
+            Save(win, Path.Combine(dir, "1c_tune_small.png"));
+            win.TuneToggle.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Primitives.ButtonBase.ClickEvent));
+            win.Width = 1080; win.Height = 700;
+            await Task.Delay(300);
 
             var t0 = sw.ElapsedMilliseconds;
             win.NavLikes.IsChecked = true;

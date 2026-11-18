@@ -70,7 +70,9 @@ public partial class MainWindow : Window
             TunePanel.Visibility = open ? Visibility.Visible : Visibility.Collapsed;
             TuneToggle.Content = open ? "Скрыть \u25B4" : "Настроить \u25BE";
             if (open) Enter(TunePanel, 6);
+            FitHero();
         };
+        WavePage.SizeChanged += (_, _) => FitHero();
         BuildWaveChips();
         AutoCs2.Click += (_, _) => { _s.AutoCs2 = !_s.AutoCs2; _s.SaveSoon(); BuildWaveChips(); UpdateCs2Watch(); };
         _cs2Timer.Tick += async (_, _) => await CheckCs2();
@@ -328,6 +330,27 @@ public partial class MainWindow : Window
     static readonly (string id, string name)[] Diversity = { ("", "Как обычно"), ("favorite", "Любимое"), ("discover", "Незнакомое"), ("popular", "Популярное") };
     static readonly (string id, string name)[] Moods = { ("", "Любое"), ("active", "Бодрое"), ("fun", "Весёлое"), ("calm", "Спокойное"), ("sad", "Грустное") };
 
+    /// <summary>Обложка на волне подстраивается под высоту окна: в маленьком окне и с открытыми настройками — меньше.</summary>
+    void FitHero()
+    {
+        Dispatcher.BeginInvoke(() =>
+        {
+            double avail = WavePage.ActualHeight - 76 - WaveContent.Margin.Top - WaveContent.Margin.Bottom;
+            if (avail <= 0) return;
+            double rest = 0;
+            foreach (FrameworkElement c in WaveContent.Children)
+                if (c != HeroArt && c.Visibility != Visibility.Collapsed) rest += c.DesiredSize.Height;
+            rest += 28 - HeroLabel.Margin.Top; // считаем с обычным отступом подписи
+            double s = Math.Min((avail - rest) / 220, 1.2);
+            // места меньше чем на обложку ~130 px — убираем её совсем, а не показываем марку
+            bool compact = s < 0.6;
+            HeroArt.Visibility = compact ? Visibility.Collapsed : Visibility.Visible;
+            HeroLabel.Margin = new Thickness(0, compact ? 0 : 28, 0, 0);
+            double cur = HeroArt.LayoutTransform is ScaleTransform st ? st.ScaleX : 1;
+            if (!compact && Math.Abs(s - cur) > 0.01) HeroArt.LayoutTransform = new ScaleTransform(s, s);
+        }, System.Windows.Threading.DispatcherPriority.Loaded);
+    }
+
     void BuildWaveChips()
     {
         void Fill(WrapPanel panel, (string id, string name)[] items, Func<string> get, Action<string> set)
@@ -369,7 +392,7 @@ public partial class MainWindow : Window
 
         NowTitle.Text = t?.FullTitle ?? "Ничего не играет";
         NowArtist.Text = t?.Artists ?? (Ym.LoggedIn ? "Включите «Мою волну» или любой список" : "");
-        Title = t != null ? $"{t.Title} — {t.Artists}" : "Player";
+        Title = t != null ? $"{t.Title} — {t.Artists}" : "Noir";
         bool waveNow = _pb.IsWave && t != null;
         HeroTitle.Text = waveNow ? t!.FullTitle : "Бесконечный поток под ваш вкус";
         if (waveNow) HeroLabel.Text = _pb.QueueName.ToUpperInvariant(); else BuildWaveChips();

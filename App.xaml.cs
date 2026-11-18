@@ -53,7 +53,7 @@ public partial class App : Application
         _host = new SystemHost();
         _host.TrayLeftClick += () => { if (_win.IsVisible && _win.IsActive) _win.HideToTray(); else _win.ShowFromTray(); };
         _host.TrayRightClick += () => TrayMenu.Toggle(_pb, () => _win.ShowFromTray(), Quit);
-        _host.ShowTray("Player");
+        _host.ShowTray("Noir");
 
         DispatcherUnhandledException += (_, ex) => { ex.Handled = true; try { _win?.ShowToast("Ошибка: " + ex.Exception.Message); } catch { } };
 

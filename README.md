@@ -1,4 +1,4 @@
-# Player
+# Noir
 
 Чёрно-белый плеер Яндекс Музыки и SoundCloud для Windows 11 (C#/WPF, .NET 10).
 

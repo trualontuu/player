@@ -47,7 +47,7 @@ public sealed class TrayMenu : Window
         if (t != null) Covers.Load(t.CoverUrl(200), 52, img => cover.Source = img);
         var texts = new StackPanel { Margin = new Thickness(12, 0, 0, 0), VerticalAlignment = VerticalAlignment.Center };
         texts.Children.Add(new TextBlock { Text = t?.FullTitle ?? "Ничего не играет", FontSize = 14, FontWeight = FontWeights.SemiBold, TextTrimming = TextTrimming.CharacterEllipsis });
-        texts.Children.Add(new TextBlock { Text = t?.Artists ?? "Player", FontSize = 12.5, Foreground = R("Dim"), TextTrimming = TextTrimming.CharacterEllipsis, Margin = new Thickness(0, 2, 0, 0) });
+        texts.Children.Add(new TextBlock { Text = t?.Artists ?? "Noir", FontSize = 12.5, Foreground = R("Dim"), TextTrimming = TextTrimming.CharacterEllipsis, Margin = new Thickness(0, 2, 0, 0) });
         var head = new DockPanel { Margin = new Thickness(14, 14, 14, 8) };
         head.Children.Add(coverBox);
         head.Children.Add(texts);
