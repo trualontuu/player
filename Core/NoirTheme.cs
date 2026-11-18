@@ -23,11 +23,11 @@ public static class NoirTheme
 
     public static readonly Palette Mono = new(C(0x0A0A0A), C(0xF2F2F2), C(0x8C8C8C), C(0x2A2A2A));
 
-    public static readonly (string id, string name)[] Modes = { ("island", "как в Island"), ("cover", "под обложку"), ("mono", "чёрно-белые") };
+    public static readonly (string id, string name)[] Modes = { ("island", "Как в Island"), ("cover", "Под обложку"), ("mono", "Чёрно-белые") };
 
     // текущие и целевые цвета; кисти в ресурсах приложения заморожены, поэтому переход —
     // подмена кистей новыми с промежуточным цветом (~500 мс на CompositionTarget.Rendering)
-    static readonly Dictionary<string, Color> _cur = new(), _from = new(), _to = new();
+    static readonly Dictionary<string, Color> _cur = new(), _from = new(), _to = new(), _pushed = new();
     static DateTime _t0;
     static bool _animating;
     static PlayerSettings? _s;
@@ -128,11 +128,16 @@ public static class NoirTheme
     static void Push()
     {
         var r = Application.Current.Resources;
+        // меняем только изменившиеся кисти: каждая замена — обход всех DynamicResource в окне
         foreach (var key in Keys)
         {
+            if (_pushed.TryGetValue(key, out var was) && was == _cur[key]) continue;
+            _pushed[key] = _cur[key];
             var b = new SolidColorBrush(_cur[key]); b.Freeze();
             r[key] = b;
         }
+        if (_pushed.TryGetValue("Shade0", out var s0) && s0 == _cur["Shade0"] && _pushed["Shade1"] == _cur["Shade1"] && _pushed["Shade2"] == _cur["Shade2"]) return;
+        _pushed["Shade0"] = _cur["Shade0"]; _pushed["Shade1"] = _cur["Shade1"]; _pushed["Shade2"] = _cur["Shade2"];
         var g = new LinearGradientBrush { StartPoint = new Point(0, 0), EndPoint = new Point(0, 1) };
         g.GradientStops.Add(new GradientStop(_cur["Shade0"], 0));
         g.GradientStops.Add(new GradientStop(_cur["Shade1"], 0.55));

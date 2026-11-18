@@ -172,6 +172,17 @@ public static class Snap
             }
 
             if (pipe) { L("жду команды из лаунчера 25 с"); await Task.Delay(25000); }
+            win.NavSettings.IsChecked = true;
+            await Task.Delay(700);
+            Save(win, Path.Combine(dir, "7_settings.png"));
+            {
+                using var pr0 = Process.GetCurrentProcess();
+                long before = pr0.PrivateMemorySize64;
+                win.HideToTray();
+                await Task.Delay(1500);
+                using var pr1 = Process.GetCurrentProcess();
+                L($"в трей: память {before / 1048576.0:0} → {pr1.PrivateMemorySize64 / 1048576.0:0} МБ, managed {GC.GetTotalMemory(false) / 1048576.0:0.0} МБ");
+            }
             GC.Collect(); GC.WaitForPendingFinalizers(); GC.Collect();
             L($"память: private {Process.GetCurrentProcess().PrivateMemorySize64 / 1048576.0:F1} МБ, managed {GC.GetTotalMemory(false) / 1048576.0:F1} МБ");
         }

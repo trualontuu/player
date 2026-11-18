@@ -192,6 +192,10 @@
             <TextBlock x:Name="Account" Foreground="{DynamicResource Dim}" FontSize="12.5" Margin="10,0,0,1" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" MaxWidth="150"/>
           </StackPanel>
 
+          <RadioButton x:Name="NavSettings" DockPanel.Dock="Bottom" Style="{StaticResource NavBtn}" GroupName="nav" Height="40" Margin="0,8,0,0">
+            <StackPanel Orientation="Horizontal"><TextBlock Text="&#xE713;" FontFamily="{StaticResource Icons}" Width="30" VerticalAlignment="Center"/><TextBlock Text="Настройки"/></StackPanel>
+          </RadioButton>
+
           <DockPanel Margin="0,24,0,0">
             <TextBlock DockPanel.Dock="Top" Text="ПЛЕЙЛИСТЫ" FontSize="10.5" FontWeight="SemiBold" Foreground="{DynamicResource Faint}" Margin="12,0,0,8"/>
             <ScrollViewer VerticalScrollBarVisibility="Auto" Focusable="False">
@@ -343,6 +347,12 @@
             <TextBlock x:Name="ListEmpty" Foreground="{DynamicResource Dim}" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed"/>
           </Grid>
         </DockPanel>
+
+        <!-- ============ настройки (строятся кодом: MainWindow.Settings.cs) ============ -->
+        <ScrollViewer x:Name="SettingsPage" Visibility="Collapsed" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Focusable="False">
+          <ScrollViewer.RenderTransform><TranslateTransform/></ScrollViewer.RenderTransform>
+          <StackPanel x:Name="SettingsBody" Margin="32,50,26,32" MaxWidth="780" HorizontalAlignment="Left"/>
+        </ScrollViewer>
 
         <!-- ============ обзор: поиск по всему, страница артиста ============ -->
         <ScrollViewer x:Name="BrowsePage" Visibility="Collapsed" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Focusable="False">

@@ -43,6 +43,7 @@ public partial class MainWindow
         NavWave.Checked += (_, _) => { if (!_quietNav) _ = Go(RootNav(NavWave, () => { ShowWave(); return Task.CompletedTask; }), true); };
         NavLikes.Checked += (_, _) => { if (!_quietNav) _ = Go(RootNav(NavLikes, ShowLikes), true); };
         NavSearch.Checked += (_, _) => { if (!_quietNav) _ = Go(RootNav(NavSearch, ShowSearch), true); };
+        NavSettings.Checked += (_, _) => { if (!_quietNav) _ = Go(RootNav(NavSettings, ShowSettings), true); };
         BtnBack.Click += async (_, _) => await Back();
         MouseUp += async (_, e) => { if (e.ChangedButton == MouseButton.XButton1) { e.Handled = true; await Back(); } };
 
@@ -100,14 +101,14 @@ public partial class MainWindow
     void UncheckNav()
     {
         _quietNav = true;
-        foreach (var rb in new[] { NavWave, NavLikes, NavSearch }.Concat(PlaylistNav.Children.OfType<RadioButton>())) rb.IsChecked = false;
+        foreach (var rb in new[] { NavWave, NavLikes, NavSearch, NavSettings }.Concat(PlaylistNav.Children.OfType<RadioButton>())) rb.IsChecked = false;
         _quietNav = false;
     }
 
     void ShowPage(FrameworkElement page, bool force = false)
     {
         bool was = page.Visibility == Visibility.Visible;
-        foreach (var p in new FrameworkElement[] { WavePage, ListPage, BrowsePage })
+        foreach (var p in new FrameworkElement[] { WavePage, ListPage, BrowsePage, SettingsPage })
             p.Visibility = p == page ? Visibility.Visible : Visibility.Collapsed;
         if (!was || force) Enter(page);
         _browseMode = page == BrowsePage ? _browseMode : "";

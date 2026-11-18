@@ -597,9 +597,20 @@ public partial class MainWindow : Window
     bool _quitting;
     public void Quit() { _quitting = true; SaveBounds(); Close(); }
 
+    bool _dropped;
+
     public void ShowFromTray()
     {
         Show();
+        if (_dropped)
+        {
+            // в трее страницы и картинки отпускали — строим заново (данные в кэше, это быстро)
+            _dropped = false;
+            _backUrl = "";
+            OnTrackChanged();
+            if (_current != null) _ = _current();
+            if (QueuePanel.Visibility == Visibility.Visible) RefreshQueue();
+        }
         if (WindowState == WindowState.Minimized) WindowState = WindowState.Normal;
         Activate();
     }
@@ -608,7 +619,32 @@ public partial class MainWindow : Window
     {
         SaveBounds();
         Hide();
+        FreeMemory(deep: true);
+    }
+
+    /// <summary>
+    /// Отпустить память. deep (окно скрыто): ещё и картинки со страницами — обложки списков,
+    /// размытый фон, карточки поиска; при открытии окна всё строится заново.
+    /// </summary>
+    void FreeMemory(bool deep)
+    {
+        if (deep)
+        {
+            _dropped = true;
+            BrowseBody.Children.Clear();
+            SettingsBody.Children.Clear();
+            Tracks.ItemsSource = null;
+            QueueList.ItemsSource = null;
+            BackA.Source = BackB.Source = null;
+            HeroCover.Source = null;
+            NowCover.Source = null;
+            ListArtImage.Source = null;
+        }
         Covers.Clear();
+        System.Runtime.GCSettings.LargeObjectHeapCompactionMode = System.Runtime.GCLargeObjectHeapCompactionMode.CompactOnce;
+        GC.Collect(2, GCCollectionMode.Forced, true, true);
+        GC.WaitForPendingFinalizers();
+        GC.Collect(2, GCCollectionMode.Forced, true, true);
         Native.TrimMemory();
     }
 

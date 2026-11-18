@@ -125,6 +125,32 @@
     </Style>
 
     <!-- пункт бокового меню -->
+    <!-- тумблер для настроек -->
+    <Style x:Key="Switch" TargetType="ToggleButton">
+      <Setter Property="Cursor" Value="Hand"/>
+      <Setter Property="Focusable" Value="False"/>
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="ToggleButton">
+            <Border x:Name="T" Width="42" Height="24" CornerRadius="12" Background="#26FFFFFF" BorderBrush="#30FFFFFF" BorderThickness="1">
+              <Ellipse x:Name="K" Width="16" Height="16" Fill="{DynamicResource Fg}" HorizontalAlignment="Left" Margin="3,0"/>
+            </Border>
+            <ControlTemplate.Triggers>
+              <Trigger Property="IsChecked" Value="True">
+                <Setter TargetName="T" Property="Background" Value="{DynamicResource Accent}"/>
+                <Setter TargetName="T" Property="BorderBrush" Value="{DynamicResource Accent}"/>
+                <Setter TargetName="K" Property="HorizontalAlignment" Value="Right"/>
+                <Setter TargetName="K" Property="Fill" Value="{DynamicResource OnAccent}"/>
+              </Trigger>
+              <Trigger Property="IsMouseOver" Value="True">
+                <Setter TargetName="T" Property="Opacity" Value="0.88"/>
+              </Trigger>
+            </ControlTemplate.Triggers>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+
     <Style x:Key="NavBtn" TargetType="RadioButton">
       <Setter Property="Foreground" Value="{DynamicResource Dim}"/>
       <Setter Property="FontSize" Value="13.5"/>

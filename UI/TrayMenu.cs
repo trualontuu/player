@@ -76,7 +76,7 @@ public sealed class TrayMenu : Window
         norm.ToolTip = "Громкие треки приглушаются, тихие подтягиваются — громкость не скачет";
 
         // цвета: по клику — следующий режим (как в Island → под обложку → чёрно-белые)
-        static string ColorsText() => "Цвета: " + Array.Find(Player.Core.NoirTheme.Modes, m => m.id == Player.Core.NoirTheme.Mode).name;
+        static string ColorsText() => "Цвета: " + Array.Find(Player.Core.NoirTheme.Modes, m => m.id == Player.Core.NoirTheme.Mode).name.ToLowerInvariant().Replace("island", "Island");
         var colors = Row("", ColorsText(), () => { });
         colors.MouseLeftButtonUp += (_, _) =>
         {
