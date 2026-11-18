@@ -37,6 +37,8 @@ public static class Snap
             var win = new MainWindow(pb, s) { SnapMode = true, ShowActivated = false, WindowStartupLocation = WindowStartupLocation.Manual, Left = -20000, Top = -20000 };
             win.Show();
             await win.Start();
+            bool pipe = Environment.GetEnvironmentVariable("PLAYER_PIPE") == "1";
+            if (pipe) { ControlPipe.Start(req => win.HandleControl(req)); L("канал управления открыт"); }
             L($"вход: {(Ym.LoggedIn ? "есть" : "нет")}");
             await Task.Delay(400);
             Save(win, Path.Combine(dir, "1_wave.png"));
@@ -138,6 +140,7 @@ public static class Snap
                 pb.Pause();
             }
 
+            if (pipe) { L("жду команды из лаунчера 25 с"); await Task.Delay(25000); }
             GC.Collect(); GC.WaitForPendingFinalizers(); GC.Collect();
             L($"память: private {Process.GetCurrentProcess().PrivateMemorySize64 / 1048576.0:F1} МБ, managed {GC.GetTotalMemory(false) / 1048576.0:F1} МБ");
         }

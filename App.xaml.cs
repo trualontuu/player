@@ -59,6 +59,8 @@ public partial class App : Application
 
         if (Array.IndexOf(e.Args, "--background") < 0) _win.Show();
         _ = _win.Start();
+        // команды из лаунчера (Alt+Q): поиск музыки, пауза, волна…
+        Player.Core.ControlPipe.Start(req => _win.HandleControl(req));
     }
 
     void Quit()
