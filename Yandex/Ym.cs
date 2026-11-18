@@ -38,6 +38,8 @@ public static class Ym
     public static string Uid { get; private set; } = "";
     public static string Login { get; private set; } = "";
     public static bool LoggedIn => _token != null;
+    /// <summary>Для пульта (Noir Connect): ретранслятор по токену узнаёт аккаунт.</summary>
+    public static string? Token => _token;
     /// <summary>Не отправлять «Моей волне» отзывы о прослушивании (режим тестов).</summary>
     public static bool NoFeedback;
 

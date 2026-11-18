@@ -65,6 +65,8 @@ public partial class App : Application
         _ = _win.Start();
         // команды из лаунчера (Alt+Q): поиск музыки, пауза, волна…
         Player.Core.ControlPipe.Start(req => _win.HandleControl(req));
+        // пульт с телефона (Noir на iPhone) через ретранслятор Noir Connect
+        Player.Core.RemoteLink.Start(req => _win.HandleControl(req), _win.RemoteState, _win.RemoteSig);
     }
 
     void Quit()

@@ -80,12 +80,54 @@ public partial class MainWindow
                 ShowFromTray();
                 return new { ok = true };
 
+            // пульт с телефона
+            case "volume":
+                if (req.TryGetProperty("v", out var v) && v.TryGetDouble(out var vol)) SetVolume(vol);
+                return State();
+            case "seek":
+                if (req.TryGetProperty("t", out var tt) && tt.TryGetDouble(out var sec) && _pb.CanSeek)
+                {
+                    var to = TimeSpan.FromSeconds(Math.Max(0, sec));
+                    _seekTo = to; _seekHold = DateTime.UtcNow.AddSeconds(1.5);
+                    _pb.Seek(to);
+                }
+                return State();
+
             default:
                 return new { error = "неизвестная команда: " + cmd };
         }
         await Task.Delay(150); // состояние MediaPlayer обновляется не мгновенно
         return State();
     }
+
+    /// <summary>Состояние для пульта на телефоне (Noir Connect).</summary>
+    public Task<object> RemoteState() => Dispatcher.InvokeAsync(() =>
+    {
+        var t = _pb.Current;
+        return (object)new
+        {
+            playing = _pb.IsPlaying,
+            title = t?.FullTitle ?? "",
+            artist = t?.Artists ?? "",
+            cover = t?.CoverUrl(400) ?? "",
+            liked = t?.Liked == true,
+            sc = t?.IsSc == true,
+            time = Math.Round(_pb.Position.TotalSeconds, 2),
+            duration = Math.Round(_pb.Duration.TotalSeconds, 2),
+            volume = Math.Round(_pb.Volume, 3),
+            queue = _pb.QueueName,
+            id = t?.Id ?? "",
+        };
+    }).Task;
+
+    /// <summary>Подпись состояния: меняется, когда пульту есть что показать (трек, пауза, лайк, громкость, перемотка).</summary>
+    public Task<string> RemoteSig() => Dispatcher.InvokeAsync(() =>
+    {
+        var t = _pb.Current;
+        // при игре «якорь» = момент начала трека по часам: сдвигается только при перемотке
+        var anchor = _pb.IsPlaying ? (long)((DateTime.UtcNow - _pb.Position).Ticks / TimeSpan.TicksPerSecond / 2) : (long)_pb.Position.TotalSeconds;
+        return $"{(_pb.IsPlaying ? 1 : 0)}|{t?.Id}|{t?.Liked}|{_pb.Volume:0.00}|{anchor}";
+    }).Task;
 
     object State()
     {
