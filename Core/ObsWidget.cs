@@ -113,7 +113,7 @@ public static class ObsWidget
     }
 
     // ------------------------------------------------------------------ страница
-    // Параметры адреса: ?hide=paused — прятать на паузе; ?scale=1.5 — крупнее; ?pos=right — справа; ?color=1 — цвета палитры; ?static=1 — без анимаций.
+    // Параметры адреса: ?hide=paused — прятать на паузе; ?scale=1.5 — крупнее; ?pos=left / ?pos=top / ?pos=top-left — другой угол (по умолчанию правый нижний); ?color=1 — цвета палитры; ?static=1 — без анимаций.
     const string Html = """
 <!doctype html>
 <html lang="ru"><head><meta charset="utf-8"><title>Noir · сейчас играет</title>
@@ -122,8 +122,10 @@ public static class ObsWidget
    поэтому чётко при любом размере: делайте источник в OBS крупным и уменьшайте на сцене */
 :root{--accent:#F2F2F2;--dim:#8C8C8C;font-size:1px}
 html,body{margin:0;background:transparent;overflow:hidden;font-family:"Segoe UI Variable Text","Segoe UI",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
-.wrap{position:absolute;left:8rem;top:8rem}
-.right .wrap{left:auto;right:8rem}
+/* по умолчанию — в правом нижнем углу холста: при смене трека меняется только левый край */
+.wrap{position:absolute;right:8rem;bottom:8rem}
+.left .wrap{right:auto;left:8rem}
+.top .wrap{bottom:auto;top:8rem}
 .card{position:relative;height:52rem;width:fit-content;max-width:250rem;min-width:150rem;display:flex;align-items:center;gap:9rem;padding:0 13rem 0 8rem;box-sizing:border-box;
   border-radius:13rem;background:#0A0A0A;border:1rem solid #1E1E1E;
   box-shadow:0 6rem 18rem rgba(0,0,0,.4);overflow:hidden;transition:opacity .4s ease,transform .5s cubic-bezier(.2,.9,.3,1.15)}
@@ -156,7 +158,7 @@ const q=new URLSearchParams(location.search);
 const hidePaused=q.get('hide')==='paused';
 const color=q.get('color')==='1';   // по умолчанию чёрно-белый; ?color=1 — цвета палитры Noir
 const scale=parseFloat(q.get('scale')||'1');
-if(q.get('pos')==='right')document.body.classList.add('right');
+const posq=q.get('pos')||'';if(posq.includes('left'))document.body.classList.add('left');if(posq.includes('top'))document.body.classList.add('top');
 if(q.get('static')==='1')document.body.classList.add('static');
 const $=id=>document.getElementById(id);
 // масштаб от высоты источника (база 72) — картинка всегда в родном разрешении, без растягивания

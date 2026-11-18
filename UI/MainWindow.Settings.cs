@@ -104,7 +104,7 @@ public partial class MainWindow
                     if (on) ObsWidget.Start(WidgetState); else ObsWidget.Stop();
                     PaintObs();
                 }), obsStatus),
-            SRow("Скопировать адрес", "Варианты: …/?hide=paused — прятать на паузе, …/?scale=1.5 — крупнее, …/?pos=right — справа, …/?color=1 — в цветах Noir",
+            SRow("Скопировать адрес", "Варианты: …/?hide=paused — прятать на паузе, …/?scale=1.5 — крупнее, …/?pos=left — к левому краю, …/?color=1 — в цветах Noir",
                 Button("Копировать", () => { try { Clipboard.SetText(ObsWidget.Url); ShowToast("Адрес виджета скопирован"); } catch { } }))));
 
         var hk = new List<FrameworkElement>
