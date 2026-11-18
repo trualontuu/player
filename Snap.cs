@@ -172,9 +172,20 @@ public static class Snap
             }
 
             if (pipe) { L("жду команды из лаунчера 25 с"); await Task.Delay(25000); }
-            win.NavSettings.IsChecked = true;
-            await Task.Delay(700);
-            Save(win, Path.Combine(dir, "7_settings.png"));
+            using (var host = new Island.Core.SystemHost())
+            {
+                win.HotkeyHost = (host.ClearHotkeys, host.RegisterHotkey);
+                win.ApplyHotkeys();
+                L($"горячие клавиши: {s.HotkeyNext}, {s.HotkeyPrev}, {s.HotkeyPause}, {s.HotkeyBan}; заняты: {(win.HotkeyFailed.Count == 0 ? "нет" : string.Join(", ", win.HotkeyFailed))}");
+                win.NavSettings.IsChecked = true;
+                await Task.Delay(700);
+                Save(win, Path.Combine(dir, "7_settings.png"));
+                win.SettingsPage.ScrollToVerticalOffset(900);
+                await Task.Delay(300);
+                Save(win, Path.Combine(dir, "7b_settings_keys.png"));
+                host.ClearHotkeys();
+                win.HotkeyHost = null;
+            }
             {
                 using var pr0 = Process.GetCurrentProcess();
                 long before = pr0.PrivateMemorySize64;

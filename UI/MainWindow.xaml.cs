@@ -577,6 +577,7 @@ public partial class MainWindow : Window
     // ---------------------------------------------------------------- клавиши
     void OnKey(object sender, KeyEventArgs e)
     {
+        if (_capture != null) { e.Handled = true; _capture(e); return; }
         bool typing = Keyboard.FocusedElement is TextBox;
         var ctrl = (Keyboard.Modifiers & ModifierKeys.Control) != 0;
         var alt = (Keyboard.Modifiers & ModifierKeys.Alt) != 0;
@@ -619,6 +620,7 @@ public partial class MainWindow : Window
     {
         SaveBounds();
         Hide();
+        CancelCapture();
         FreeMemory(deep: true);
     }
 

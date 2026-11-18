@@ -55,6 +55,8 @@ public partial class App : Application
         _host.TrayLeftClick += () => { if (_win.IsVisible && _win.IsActive) _win.HideToTray(); else _win.ShowFromTray(); };
         _host.TrayRightClick += () => TrayMenu.Toggle(_pb, () => _win.ShowFromTray(), Quit);
         _host.ShowTray("Noir");
+        _win.HotkeyHost = (_host.ClearHotkeys, _host.RegisterHotkey);
+        _win.ApplyHotkeys();
 
         DispatcherUnhandledException += (_, ex) => { ex.Handled = true; try { _win?.ShowToast("Ошибка: " + ex.Exception.Message); } catch { } };
 

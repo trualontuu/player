@@ -14,6 +14,11 @@ public sealed class PlayerSettings
     public bool Normalize { get; set; } = true;
     /// <summary>Цвета: island — как тема Island, cover — под обложку, mono — чёрно-белые.</summary>
     public string ColorMode { get; set; } = "island";
+    /// <summary>Глобальные сочетания — работают и в игре (обычный RegisterHotKey, в процесс игры не лезем).</summary>
+    public string HotkeyNext { get; set; } = "Ctrl+Alt+Right";
+    public string HotkeyPrev { get; set; } = "Ctrl+Alt+Left";
+    public string HotkeyPause { get; set; } = "Ctrl+Alt+Down";
+    public string HotkeyBan { get; set; } = "Ctrl+Alt+Up";
     /// <summary>Максимальный битрейт: 320 или 192 (экономия трафика).</summary>
     public int MaxKbps { get; set; } = 320;
     /// <summary>Обесцвечивать обложки (по умолчанию цветные — интерфейс при этом остаётся ч/б).</summary>

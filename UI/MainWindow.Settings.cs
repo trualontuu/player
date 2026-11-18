@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -28,6 +29,7 @@ public partial class MainWindow
 
     void BuildSettings()
     {
+        CancelCapture();
         var body = SettingsBody;
         body.Children.Clear();
         body.Children.Add(new TextBlock
@@ -86,7 +88,14 @@ public partial class MainWindow
         body.Children.Add(Group("Система",
             SRow("Запускать вместе с Windows", "Тихо, сразу в трей — медиаклавиши и Island работают с первой минуты",
                 Switch(IsAutostart(), SetAutostart)),
-            SRow("Горячие клавиши", "Ctrl+F — поиск · Ctrl+Q — очередь · Alt+← — назад · Esc — закрыть очередь. Медиаклавиши и Alt+Q (лаунчер: «пауза», «дальше», «кс2») — всегда", null)));
+            SRow("Клавиши в окне", "Ctrl+F — поиск · Ctrl+Q — очередь · Alt+← — назад · Esc — закрыть очередь", null)));
+
+        var hk = new List<FrameworkElement>
+        {
+            SRow("Работают везде, и в игре", "Не нужно сворачивать CS2. Ещё всегда работают медиаклавиши и Alt+Q (лаунчер: «пауза», «дальше», «кс2»)", null),
+        };
+        hk.AddRange(HotkeyRows());
+        body.Children.Add(Group("Горячие клавиши", hk.ToArray()));
 
         var memText = new TextBlock { Foreground = (Brush)FindResource("Dim"), FontSize = 12.5, TextWrapping = TextWrapping.Wrap };
         var cacheText = new TextBlock { Foreground = (Brush)FindResource("Dim"), FontSize = 12.5, TextWrapping = TextWrapping.Wrap };
