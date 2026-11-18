@@ -125,7 +125,7 @@ html,body{margin:0;background:transparent;overflow:hidden;font-family:"Segoe UI 
 .wrap{position:absolute;left:8rem;top:8rem}
 .right .wrap{left:auto;right:8rem}
 .card{position:relative;height:52rem;width:fit-content;max-width:250rem;min-width:150rem;display:flex;align-items:center;gap:9rem;padding:0 13rem 0 8rem;box-sizing:border-box;
-  border-radius:13rem;background:rgba(10,10,10,.88);border:1rem solid rgba(255,255,255,.08);
+  border-radius:13rem;background:#0A0A0A;border:1rem solid #1E1E1E;
   box-shadow:0 6rem 18rem rgba(0,0,0,.4);overflow:hidden;transition:opacity .4s ease,transform .5s cubic-bezier(.2,.9,.3,1.15)}
 .card.hidden{opacity:0;transform:translateY(8rem) scale(.97)}
 .cover{width:36rem;height:36rem;border-radius:8rem;background:#1a1a1a center/cover no-repeat;flex:none;border:1rem solid rgba(255,255,255,.08)}
@@ -170,7 +170,7 @@ async function tick(){
     if(color){const r=document.documentElement.style;
       if(ok(s.accent))r.setProperty('--accent',s.accent);
       if(ok(s.dim))r.setProperty('--dim',s.dim);
-      if(ok(s.bg))$('card').style.background=s.bg+'DB';}
+      if(ok(s.bg))$('card').style.background=s.bg;}
     const has=!!s.title, show=has&&!(hidePaused&&!s.playing);
     $('card').classList.toggle('hidden',!show);
     $('card').classList.toggle('paused',!s.playing);
