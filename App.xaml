@@ -56,6 +56,8 @@
       <Setter Property="Focusable" Value="False"/>
       <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
       <Setter Property="RenderTransform"><Setter.Value><ScaleTransform/></Setter.Value></Setter>
+      <!-- без ClearType: на белом круге он давал цветную кайму у значка -->
+      <Setter Property="TextOptions.TextRenderingMode" Value="Grayscale"/>
       <Setter Property="Template">
         <Setter.Value>
           <ControlTemplate TargetType="Button">
@@ -79,8 +81,9 @@
     <!-- кнопка-«пилюля» (Слушать, Перемешать, фильтры волны) -->
     <Style x:Key="Pill" TargetType="Button">
       <Setter Property="Foreground" Value="{StaticResource Fg}"/>
-      <Setter Property="Background" Value="Transparent"/>
-      <Setter Property="BorderBrush" Value="#333333"/>
+      <!-- полупрозрачные: видны и на тёмном, и на светлом размытом фоне обложки -->
+      <Setter Property="Background" Value="#14FFFFFF"/>
+      <Setter Property="BorderBrush" Value="#2EFFFFFF"/>
       <Setter Property="FontSize" Value="13"/>
       <Setter Property="Padding" Value="16,7"/>
       <Setter Property="Cursor" Value="Hand"/>
@@ -93,7 +96,8 @@
             </Border>
             <ControlTemplate.Triggers>
               <Trigger Property="IsMouseOver" Value="True">
-                <Setter TargetName="B" Property="BorderBrush" Value="#777777"/>
+                <Setter TargetName="B" Property="Background" Value="#26FFFFFF"/>
+                <Setter TargetName="B" Property="BorderBrush" Value="#55FFFFFF"/>
               </Trigger>
             </ControlTemplate.Triggers>
           </ControlTemplate>

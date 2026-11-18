@@ -65,7 +65,7 @@ public partial class MainWindow
             case "prev": _pb.Prev(); break;
             case "like":
                 if (_pb.Current is { IsSc: false }) await _pb.LikeCurrent();
-                break;
+                return State(); // без паузы: лайк уже записан в t.Liked
 
             case "wave":
             case "wave_cs2":
@@ -96,6 +96,7 @@ public partial class MainWindow
             title = t?.FullTitle ?? "",
             artist = t?.Artists ?? "",
             liked = t?.Liked == true,
+            sc = t?.IsSc == true, // у SoundCloud лайков нет — остров прячет сердечко
             queue = _pb.QueueName,
         };
     }
